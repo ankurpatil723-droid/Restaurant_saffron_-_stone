@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Live Delivery Tracking | Saffron & Stone</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..700&family=Playfair+Display:ital,wght@0,500..800;1,500..700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #20251f;
+      --muted: #6f756d;
+      --cream: #f8f6ef;
+      --paper: #fffdf8;
+      --green: #294c3a;
+      --green-dark: #1d382b;
+      --lime: #d8e4a4;
+      --orange: #d97645;
+      --line: #e7e4da;
+      --shadow: 0 16px 45px rgba(29, 56, 43, 0.09);
+      --radius: 20px;
+      --card-bg: #fffdf8;
+      --stepper-bg: #f3f0e6;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--cream);
+      color: var(--ink);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 12px;
+    }
+
+    .tracker-app {
+      width: 100%;
+      max-width: 480px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 4px;
+    }
+
+    .brand-title {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--green);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .home-link {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 6px 12px;
+      background: rgba(41, 76, 58, 0.08);
+      border-radius: 999px;
+      transition: background 0.15s ease;
+    }
+
+    .home-link:hover {
+      background: rgba(41, 76, 58, 0.14);
+      color: var(--green);
+    }
+
+    /* Live ETA & Status Header Card */
+    .hero-card {
+      background: var(--card-bg);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .eta-label {
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+    }
+
+    .eta-headline {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--green);
+      margin-top: 2px;
+    }
+
+    .pulse-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      background: #e9eddb;
+      border-radius: 999px;
+      color: var(--green);
+      font-size: 0.74rem;
+      font-weight: 700;
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #16a34a;
+      box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.7);
+      animation: pulse 1.8s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(22, 163, 74, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(22, 163, 74, 0); }
+    }
+
+    /* Status Stepper */
+    .stepper {
+      display: flex;
+      position: relative;
+      margin: 16px 0 6px 0;
+      justify-content: space-between;
+    }
+
+    .stepper::before {
+      content: '';
+      position: absolute;
+      top: 14px;
+      left: 20px;
+      right: 20px;
+      height: 3px;
+      background: var(--stepper-bg);
+      z-index: 1;
+    }
+
+    .stepper-progress {
+      position: absolute;
+      top: 14px;
+      left: 20px;
+      height: 3px;
+      background: var(--green);
+      z-index: 2;
+      transition: width 0.4s ease;
+      width: 0%;
+    }
+
+    .step-item {
+      position: relative;
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 25%;
+    }
+
+    .step-circle {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: var(--paper);
+      border: 2px solid var(--stepper-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--muted);
+      transition: all 0.3s ease;
+    }
+
+    .step-item.active .step-circle {
+      border-color: var(--green);
+      background: var(--green);
+      color: #fff;
+      box-shadow: 0 0 0 4px rgba(41, 76, 58, 0.15);
+    }
+
+    .step-item.done .step-circle {
+      border-color: var(--green);
+      background: var(--green);
+      color: #fff;
+    }
+
+    .step-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--muted);
+      margin-top: 6px;
+      text-align: center;
+      line-height: 1.2;
+    }
+
+    .step-item.active .step-label {
+      color: var(--green);
+      font-weight: 700;
+    }
+
+    /* Map Box */
+    .map-container {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      height: 340px;
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    #map {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Distance Floating Pill over Map */
+    .distance-floating-pill {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(255, 253, 248, 0.94);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 6px 14px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--green);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      z-index: 10;
+    }
+
+    /* Friendly Pre-delivery Notice */
+    .notice-card {
+      background: #fbfbf7;
+      border: 1px dashed var(--line);
+      border-radius: 14px;
+      padding: 14px;
+      font-size: 0.85rem;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .notice-card .notice-icon {
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+
+    /* Live Update Ticker */
+    .ticker-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.78rem;
+      color: var(--muted);
+      padding: 4px 6px;
+    }
+
+    .ticker-time {
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    /* Delivered Celebration Modal/Banner */
+    .delivered-banner {
+      display: none;
+      background: #f0fdf4;
+      border: 1px solid #86efac;
+      border-radius: 16px;
+      padding: 16px;
+      text-align: center;
+      color: #166534;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .delivered-banner h3 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 1.25rem;
+      margin-bottom: 4px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Error / Token Input Card */
+    .token-card {
+      display: none;
+      background: var(--card-bg);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 24px;
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+
+    .token-card h2 {
+      font-family: 'Playfair Display', Georgia, serif;
+      color: var(--green);
+      font-size: 1.3rem;
+      margin-bottom: 8px;
+    }
+
+    .token-input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      margin: 14px 0;
+      font-family: inherit;
+      font-size: 0.95rem;
+    }
+
+    .token-btn {
+      background: var(--green);
+      color: #fff;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    /* Map Fallback View (if mapsKey is not configured) */
+    .map-fallback {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      padding: 24px;
+      text-align: center;
+      background: #f4f6ee;
+      color: var(--green);
+    }
+
+    .radar-circle {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      border: 2px dashed var(--green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      margin-bottom: 12px;
+      animation: spin 14s linear infinite;
+    }
+
+    @keyframes spin {
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="tracker-app">
+    <!-- Header -->
+    <header>
+      <div class="brand-title">
+        <span>🌿</span> Saffron &amp; Stone
+      </div>
+      <a href="index.html" class="home-link">← Restaurant Menu</a>
+    </header>
+
+    <!-- Token Entry Card (Shown only if no token in query param) -->
+    <div id="tokenEntryCard" class="token-card">
+      <h2>Track Your Order</h2>
+      <p style="font-size:0.86rem; color:var(--muted);">Enter the tracking token from your order confirmation or WhatsApp link:</p>
+      <input type="text" id="manualTokenInput" class="token-input" placeholder="e.g. 3fa85f64-5717-4562-b3fc-2c963f66afa6">
+      <button type="button" id="manualTokenBtn" class="token-btn">Track Order →</button>
+    </div>
+
+    <!-- Active Tracking View Container -->
+    <div id="trackingView" style="display:flex; flex-direction:column; gap:14px;">
+      
+      <!-- Delivered Celebration Banner -->
+      <div id="deliveredBanner" class="delivered-banner" role="status">
+        <h3>🎉 Order Delivered!</h3>
+        <p style="font-size:0.88rem;">Our rider has handed over your feast. Enjoy your fresh gourmet meal!</p>
+      </div>
+
+      <!-- Hero Card: Status & Stepper -->
+      <div class="hero-card">
+        <div class="hero-top">
+          <div>
+            <div class="eta-label">Delivery Status</div>
+            <div class="eta-headline" id="statusTitle">Checking status...</div>
+          </div>
+          <div class="pulse-badge" id="liveBadge">
+            <span class="pulse-dot"></span>
+            <span id="liveBadgeText">Live GPS</span>
+          </div>
+        </div>
+
+        <!-- Stepper (4 steps) -->
+        <div class="stepper" role="progressbar" aria-label="Order Delivery Progress" aria-valuemin="1" aria-valuemax="4" aria-valuenow="1" id="stepper">
+          <div class="stepper-progress" id="stepperBar"></div>
+
+          <div class="step-item active" id="step1">
+            <div class="step-circle">1</div>
+            <div class="step-label">Order Placed</div>
+          </div>
+
+          <div class="step-item" id="step2">
+            <div class="step-circle">2</div>
+            <div class="step-label">Kitchen Preparing</div>
+          </div>
+
+          <div class="step-item" id="step3">
+            <div class="step-circle">3</div>
+            <div class="step-label">Out for Delivery</div>
+          </div>
+
+          <div class="step-item" id="step4">
+            <div class="step-circle">4</div>
+            <div class="step-label">Delivered</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Map Viewport -->
+      <div class="map-container" aria-label="Delivery Map" role="region">
+        <div class="distance-floating-pill" id="distancePill">
+          <span>🛵</span> <span id="distanceText">Calculating distance...</span>
+        </div>
+        <div id="map"></div>
+      </div>
+
+      <!-- Delivered Banner with Delivery Confirmation Button -->
+      <div class="delivered-banner" id="deliveredBanner" style="display:none; margin-top:8px;">
+        <div id="unconfirmedSection">
+          <div style="font-size: 2rem; margin-bottom: 4px;">📦 🎉</div>
+          <h3>Your Order has Arrived!</h3>
+          <p style="font-size: 0.86rem; margin-bottom: 14px; opacity: 0.9;">
+            Our courier has delivered your meal. Please confirm receipt below:
+          </p>
+          <button id="btnConfirmReceived" style="background: #166534; color: #fff; border: none; padding: 12px 24px; border-radius: 999px; font-family: inherit; font-size: 0.95rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; box-shadow: 0 4px 14px rgba(22, 101, 52, 0.25); transition: all 0.15s ease;">
+            ✓ I received my order
+          </button>
+        </div>
+        <div id="confirmedSection" style="display: none;">
+          <div style="font-size: 2rem; margin-bottom: 4px;">✅</div>
+          <h3>Delivery Confirmed!</h3>
+          <p style="font-size: 0.86rem; opacity: 0.9;">
+            Receipt confirmed by you. Thank you for dining with Saffron &amp; Stone!
+          </p>
+          <div id="confirmedTimestamp" style="font-size: 0.76rem; margin-top: 6px; opacity: 0.8;"></div>
+        </div>
+      </div>
+
+      <!-- Friendly Notice for Pending / Preparing stages -->
+      <div class="notice-card" id="kitchenNotice">
+        <div class="notice-icon">🧑‍🍳</div>
+        <div>
+          <strong style="color:var(--ink); display:block; margin-bottom:2px;">Fresh from the Tandoor &amp; Hearth</strong>
+          Our chefs are currently preparing your artisanal meal. As soon as our delivery rider picks it up, their live GPS coordinates will glide across the map in real time!
+        </div>
+      </div>
+
+      <!-- Live Ticker Bar -->
+      <div class="ticker-bar" aria-live="polite">
+        <span id="tickerText">Connecting to restaurant radar...</span>
+        <span class="ticker-time" id="lastUpdatedTimer">Updated just now</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API = "http://localhost:3000";
+    const POLL_INTERVAL_MS = 5000; // Poll every 5 sec as required
+
+    // Configuration
+    const CONFIG = {
+      mapsKey: "", // Put restricted Google Maps key here or leave empty for built-in visual radar
+      restaurantLat: 18.5204, // Saffron & Stone (Pune)
+      restaurantLng: 73.8567,
+      restaurantName: "Saffron & Stone"
+    };
+
+    // DOM Elements
+    const trackingView = document.getElementById("trackingView");
+    const tokenEntryCard = document.getElementById("tokenEntryCard");
+    const manualTokenInput = document.getElementById("manualTokenInput");
+    const manualTokenBtn = document.getElementById("manualTokenBtn");
+    const statusTitle = document.getElementById("statusTitle");
+    const liveBadge = document.getElementById("liveBadge");
+    const liveBadgeText = document.getElementById("liveBadgeText");
+    const stepperBar = document.getElementById("stepperBar");
+    const step1 = document.getElementById("step1");
+    const step2 = document.getElementById("step2");
+    const step3 = document.getElementById("step3");
+    const step4 = document.getElementById("step4");
+    const distancePill = document.getElementById("distancePill");
+    const distanceText = document.getElementById("distanceText");
+    const kitchenNotice = document.getElementById("kitchenNotice");
+    const tickerText = document.getElementById("tickerText");
+    const lastUpdatedTimer = document.getElementById("lastUpdatedTimer");
+    const deliveredBanner = document.getElementById("deliveredBanner");
+
+    // Tracking state
+    let trackingToken = "";
+    let pollTimer = null;
+    let secondsSinceUpdate = 0;
+    let tickerInterval = null;
+    let lastData = null;
+
+    // Google Maps objects
+    let mapInstance = null;
+    let restaurantMarker = null;
+    let destMarker = null;
+    let driverMarker = null;
+    let polylineInstance = null;
+    let isMapLoaded = false;
+
+    // Smooth animation state for driver marker
+    let animStartPos = null;
+    let animEndPos = null;
+    let animStartTime = 0;
+    const ANIM_DURATION_MS = 1200;
+
+    // Escape helper
+    function escapeHTML(str) {
+      if (!str) return "";
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    // Read token from URL (?t=... or ?token=...)
+    const urlParams = new URLSearchParams(window.location.search);
+    trackingToken = (urlParams.get("t") || urlParams.get("token") || "").trim();
+
+    if (!trackingToken) {
+      trackingView.style.display = "none";
+      tokenEntryCard.style.display = "block";
+    } else {
+      initTracking();
+    }
+
+    manualTokenBtn.addEventListener("click", () => {
+      const val = manualTokenInput.value.trim();
+      if (!val) return;
+      window.location.search = `?t=${encodeURIComponent(val)}`;
+    });
+
+    // Haversine straight line distance formula
+    function calculateDistanceKm(lat1, lon1, lat2, lon2) {
+      const R = 6371; // Earth radius in km
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      return R * c;
+    }
+
+    function formatDistance(km) {
+      if (km < 1) {
+        return `${Math.round(km * 1000)} m away`;
+      }
+      return `${km.toFixed(1)} km away`;
+    }
+
+    // Google Maps Initializer
+    function initGoogleMap() {
+      const mapEl = document.getElementById("map");
+      if (!mapEl || !window.google || !window.google.maps) return;
+
+      const center = { lat: CONFIG.restaurantLat, lng: CONFIG.restaurantLng };
+
+      mapInstance = new google.maps.Map(mapEl, {
+        center,
+        zoom: 14,
+        mapTypeControl: false,
+        streetViewControl: false,
+        fullscreenControl: false,
+        zoomControl: true,
+        styles: [
+          { featureType: "poi", elementType: "labels", stylers: [{ visibility: "off" }] }
+        ]
+      });
+
+      // Restaurant Marker
+      restaurantMarker = new google.maps.Marker({
+        position: center,
+        map: mapInstance,
+        title: CONFIG.restaurantName,
+        icon: {
+          url: "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(`
+            <svg xmlns="http://www.w3.org/2000/svg" width="38" height="48" viewBox="0 0 38 48">
+              <path d="M19 0 C8.5 0 0 8.5 0 19 C0 33 19 48 19 48 C19 48 38 33 38 19 C38 8.5 29.5 0 19 0 Z" fill="#294c3a"/>
+              <circle cx="19" cy="18" r="13" fill="#ffffff"/>
+              <text x="19" y="23" font-size="14" text-anchor="middle" font-family="sans-serif">🍽️</text>
+            </svg>
+          `),
+          scaledSize: new google.maps.Size(38, 48),
+          anchor: new google.maps.Point(19, 48)
+        }
+      });
+
+      isMapLoaded = true;
+
+      // If we already received tracking data before map loaded, apply it now
+      if (lastData) {
+        renderMapData(lastData);
+      }
+    }
+    window.initGoogleMap = initGoogleMap;
+
+    // Load Google Maps script or fallback
+    function loadMapsApi() {
+      if (CONFIG.mapsKey) {
+        const script = document.createElement("script");
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(CONFIG.mapsKey)}&libraries=places,geometry&callback=initGoogleMap`;
+        script.async = true;
+        script.defer = true;
+        document.head.appendChild(script);
+      } else {
+        // Fallback visual display when no key provided
+        renderFallbackMap();
+      }
+    }
+
+    function renderFallbackMap() {
+      const mapEl = document.getElementById("map");
+      mapEl.innerHTML = `
+        <div class="map-fallback">
+          <div class="radar-circle">📍</div>
+          <strong style="font-size:1rem; margin-bottom:4px;">Live Satellite Radar Active</strong>
+          <span style="font-size:0.8rem; color:var(--muted); max-width:280px;" id="fallbackInfo">
+            Tracking GPS coordinates streamed from driver device.
+          </span>
+        </div>
+      `;
+    }
+
+    // Smooth marker movement animation via requestAnimationFrame
+    function animateDriverMarker(step) {
+      if (!driverMarker || !animStartPos || !animEndPos) return;
+
+      const elapsed = Date.now() - animStartTime;
+      const progress = Math.min(elapsed / ANIM_DURATION_MS, 1);
+
+      // Linear interpolation
+      const currentLat = animStartPos.lat + (animEndPos.lat - animStartPos.lat) * progress;
+      const currentLng = animStartPos.lng + (animEndPos.lng - animStartPos.lng) * progress;
+      driverMarker.setPosition({ lat: currentLat, lng: currentLng });
+
+      if (progress < 1) {
+        requestAnimationFrame(animateDriverMarker);
+      }
+    }
+
+    // Render Data on Google Map (or fallback)
+    function renderMapData(data) {
+      const destLat = Number(data.dest_lat);
+      const destLng = Number(data.dest_lng);
+      const driverLat = Number(data.driver_lat);
+      const driverLng = Number(data.driver_lng);
+
+      const hasDest = !isNaN(destLat) && !isNaN(destLng) && data.dest_lat !== null;
+      const hasDriver = !isNaN(driverLat) && !isNaN(driverLng) && data.driver_lat !== null;
+
+      if (!isMapLoaded) {
+        // Update fallback view text
+        const fallbackInfo = document.getElementById("fallbackInfo");
+        if (fallbackInfo) {
+          if (hasDriver) {
+            fallbackInfo.textContent = `Driver Position: Lat ${driverLat.toFixed(5)}, Lng ${driverLng.toFixed(5)}`;
+          } else {
+            fallbackInfo.textContent = `Waiting for driver to broadcast GPS coordinates...`;
+          }
+        }
+        return;
+      }
+
+      const bounds = new google.maps.LatLngBounds();
+      bounds.extend({ lat: CONFIG.restaurantLat, lng: CONFIG.restaurantLng });
+
+      // Destination / Home Marker
+      if (hasDest) {
+        const destPos = { lat: destLat, lng: destLng };
+        bounds.extend(destPos);
+
+        if (!destMarker) {
+          destMarker = new google.maps.Marker({
+            position: destPos,
+            map: mapInstance,
+            title: "Delivery Destination",
+            icon: {
+              url: "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(`
+                <svg xmlns="http://www.w3.org/2000/svg" width="38" height="48" viewBox="0 0 38 48">
+                  <path d="M19 0 C8.5 0 0 8.5 0 19 C0 33 19 48 19 48 C19 48 38 33 38 19 C38 8.5 29.5 0 19 0 Z" fill="#d97645"/>
+                  <circle cx="19" cy="18" r="13" fill="#ffffff"/>
+                  <text x="19" y="23" font-size="14" text-anchor="middle" font-family="sans-serif">🏠</text>
+                </svg>
+              `),
+              scaledSize: new google.maps.Size(38, 48),
+              anchor: new google.maps.Point(19, 48)
+            }
+          });
+        } else {
+          destMarker.setPosition(destPos);
+        }
+      }
+
+      // Driver Bike Marker
+      if (hasDriver) {
+        const newPos = { lat: driverLat, lng: driverLng };
+        bounds.extend(newPos);
+
+        if (!driverMarker) {
+          driverMarker = new google.maps.Marker({
+            position: newPos,
+            map: mapInstance,
+            title: "Delivery Driver",
+            icon: {
+              url: "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(`
+                <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 44 44">
+                  <circle cx="22" cy="22" r="20" fill="#15803d" stroke="#ffffff" stroke-width="3"/>
+                  <text x="22" y="28" font-size="20" text-anchor="middle" font-family="sans-serif">🛵</text>
+                </svg>
+              `),
+              scaledSize: new google.maps.Size(44, 44),
+              anchor: new google.maps.Point(22, 22)
+            }
+          });
+          animStartPos = newPos;
+        } else {
+          // Smoothly interpolate position
+          const currentPos = driverMarker.getPosition();
+          animStartPos = { lat: currentPos.lat(), lng: currentPos.lng() };
+          animEndPos = newPos;
+          animStartTime = Date.now();
+          requestAnimationFrame(animateDriverMarker);
+        }
+
+        // Draw Straight line between Driver and Destination (or Restaurant if no dest)
+        const targetPos = hasDest ? { lat: destLat, lng: destLng } : { lat: CONFIG.restaurantLat, lng: CONFIG.restaurantLng };
+        const lineCoords = [newPos, targetPos];
+
+        if (!polylineInstance) {
+          polylineInstance = new google.maps.Polyline({
+            path: lineCoords,
+            geodesic: true,
+            strokeColor: "#294c3a",
+            strokeOpacity: 0.8,
+            strokeWeight: 4,
+            map: mapInstance
+          });
+        } else {
+          polylineInstance.setPath(lineCoords);
+        }
+      }
+
+      // Fit map bounds to show all active pins
+      if (mapInstance && (hasDest || hasDriver)) {
+        mapInstance.fitBounds(bounds, { top: 40, bottom: 40, left: 40, right: 40 });
+      }
+    }
+
+    // Update UI Elements with Tracking Data
+    function updateUI(data) {
+      lastData = data;
+      secondsSinceUpdate = 0;
+      lastUpdatedTimer.textContent = "Updated just now";
+
+      const status = data.status || "pending";
+
+      // Stepper & Headline update
+      step1.className = "step-item";
+      step2.className = "step-item";
+      step3.className = "step-item";
+      step4.className = "step-item";
+
+      switch (status) {
+        case "placed":
+        case "pending":
+          step1.className = "step-item active";
+          stepperBar.style.width = "0%";
+          statusTitle.textContent = "Order Placed";
+          tickerText.textContent = "Your order was received and confirmed by kitchen.";
+          kitchenNotice.style.display = "flex";
+          liveBadgeText.textContent = "Confirmed";
+          deliveredBanner.style.display = "none";
+          break;
+
+        case "accepted":
+          step1.className = "step-item done";
+          step2.className = "step-item active";
+          stepperBar.style.width = "25%";
+          statusTitle.textContent = "Order Accepted";
+          tickerText.textContent = "The kitchen accepted your order and started prep.";
+          kitchenNotice.style.display = "flex";
+          liveBadgeText.textContent = "Accepted";
+          deliveredBanner.style.display = "none";
+          break;
+
+        case "preparing":
+          step1.className = "step-item done";
+          step2.className = "step-item active";
+          stepperBar.style.width = "50%";
+          statusTitle.textContent = "Cooking in Kitchen";
+          tickerText.textContent = "Chef is handcrafting your gourmet dishes.";
+          kitchenNotice.style.display = "flex";
+          liveBadgeText.textContent = "In Kitchen";
+          deliveredBanner.style.display = "none";
+          break;
+
+        case "ready":
+          step1.className = "step-item done";
+          step2.className = "step-item done";
+          step3.className = "step-item active";
+          stepperBar.style.width = "75%";
+          statusTitle.textContent = "Packed & Ready";
+          tickerText.textContent = "Your meal is packaged and waiting for rider pickup.";
+          kitchenNotice.style.display = "none";
+          liveBadgeText.textContent = "Ready for Rider";
+          deliveredBanner.style.display = "none";
+          break;
+
+        case "out_for_delivery":
+          step1.className = "step-item done";
+          step2.className = "step-item done";
+          step3.className = "step-item active";
+          stepperBar.style.width = "85%";
+          statusTitle.textContent = "On The Way!";
+          tickerText.textContent = "Courier is en route to your doorstep.";
+          kitchenNotice.style.display = "none";
+          liveBadgeText.textContent = "Live GPS Active";
+          deliveredBanner.style.display = "none";
+          break;
+
+        case "delivered":
+          step1.className = "step-item done";
+          step2.className = "step-item done";
+          step3.className = "step-item done";
+          step4.className = "step-item active done";
+          stepperBar.style.width = "100%";
+          statusTitle.textContent = "Delivered";
+          tickerText.textContent = "Order complete. Thank you for dining with us!";
+          kitchenNotice.style.display = "none";
+          liveBadgeText.textContent = "Completed";
+          deliveredBanner.style.display = "block";
+          distancePill.style.display = "none";
+
+          const unconf = document.getElementById("unconfirmedSection");
+          const conf = document.getElementById("confirmedSection");
+          const confTime = document.getElementById("confirmedTimestamp");
+
+          if (data.delivery_confirmed) {
+            unconf.style.display = "none";
+            conf.style.display = "block";
+            confTime.textContent = data.delivery_confirmed_at
+              ? "Confirmed at " + new Date(data.delivery_confirmed_at).toLocaleTimeString()
+              : "Confirmed by you";
+          } else {
+            unconf.style.display = "block";
+            conf.style.display = "none";
+          }
+          break;
+
+        case "cancelled":
+        case "rejected":
+          statusTitle.textContent = "Order " + (status === "cancelled" ? "Cancelled" : "Rejected");
+          tickerText.textContent = "This order was cancelled. Please contact restaurant if you have questions.";
+          kitchenNotice.style.display = "none";
+          liveBadgeText.textContent = "Cancelled";
+          deliveredBanner.style.display = "none";
+          break;
+      }
+
+      // Distance calculation
+      const destLat = Number(data.dest_lat);
+      const destLng = Number(data.dest_lng);
+      const driverLat = Number(data.driver_lat);
+      const driverLng = Number(data.driver_lng);
+
+      if (status === "delivered") {
+        distancePill.style.display = "none";
+      } else if (!isNaN(driverLat) && !isNaN(driverLng) && data.driver_lat !== null) {
+        const targetLat = !isNaN(destLat) && data.dest_lat !== null ? destLat : CONFIG.restaurantLat;
+        const targetLng = !isNaN(destLng) && data.dest_lng !== null ? destLng : CONFIG.restaurantLng;
+
+        const distKm = calculateDistanceKm(driverLat, driverLng, targetLat, targetLng);
+        distanceText.textContent = formatDistance(distKm);
+        distancePill.style.display = "flex";
+      } else if (!isNaN(destLat) && data.dest_lat !== null) {
+        const distKm = calculateDistanceKm(CONFIG.restaurantLat, CONFIG.restaurantLng, destLat, destLng);
+        distanceText.textContent = `~${formatDistance(distKm)} from restaurant`;
+        distancePill.style.display = "flex";
+      } else {
+        distanceText.textContent = "Live Tracking Active";
+        distancePill.style.display = "flex";
+      }
+
+      // Render Map Objects
+      renderMapData(data);
+    }
+
+    // Poll /api/track/:token every 5 seconds
+    async function fetchTrackingData() {
+      if (!trackingToken) return;
+
+      try {
+        const resp = await fetch(`${API}/api/track/${encodeURIComponent(trackingToken)}`);
+        if (!resp.ok) {
+          if (resp.status === 404) {
+            statusTitle.textContent = "Order Not Found";
+            tickerText.textContent = "Unknown tracking token. Please verify your link.";
+            kitchenNotice.style.display = "none";
+            return;
+          }
+          throw new Error(`Server returned ${resp.status}`);
+        }
+
+        const data = await resp.json();
+        updateUI(data);
+      } catch (err) {
+        tickerText.textContent = `Retrying connection... (${escapeHTML(err.message)})`;
+      }
+    }
+
+    // Initialize tracking routine
+    function initTracking() {
+      trackingView.style.display = "flex";
+      tokenEntryCard.style.display = "none";
+
+      loadMapsApi();
+      fetchTrackingData();
+
+      // Poll every 5 seconds
+      pollTimer = setInterval(fetchTrackingData, POLL_INTERVAL_MS);
+
+      // Ticker timer incrementing every second ("last updated X sec ago")
+      tickerInterval = setInterval(() => {
+        secondsSinceUpdate++;
+        if (secondsSinceUpdate <= 2) {
+          lastUpdatedTimer.textContent = "Updated just now";
+        } else {
+          lastUpdatedTimer.textContent = `Updated ${secondsSinceUpdate}s ago`;
+        }
+      }, 1000);
+
+      // Customer "I received my order" confirmation button
+      const confirmBtn = document.getElementById("btnConfirmReceived");
+      if (confirmBtn) {
+        confirmBtn.addEventListener("click", async () => {
+          confirmBtn.disabled = true;
+          confirmBtn.textContent = "Confirming receipt...";
+          try {
+            const resp = await fetch(`${API}/api/orders/${encodeURIComponent(trackingToken)}/confirm-delivery`, {
+              method: "POST"
+            });
+            const resData = await resp.json();
+            if (!resp.ok) {
+              alert(`Error: ${resData.error || "Failed to confirm receipt"}`);
+              confirmBtn.disabled = false;
+              confirmBtn.textContent = "✓ I received my order";
+              return;
+            }
+            document.getElementById("unconfirmedSection").style.display = "none";
+            document.getElementById("confirmedSection").style.display = "block";
+            document.getElementById("confirmedTimestamp").textContent = resData.delivery_confirmed_at
+              ? "Confirmed at " + new Date(resData.delivery_confirmed_at).toLocaleTimeString()
+              : "Confirmed by you";
+          } catch (err) {
+            alert("Network error confirming delivery receipt");
+            confirmBtn.disabled = false;
+            confirmBtn.textContent = "✓ I received my order";
+          }
+        });
+      }
+    }
+  </script>
+</body>
+</html>

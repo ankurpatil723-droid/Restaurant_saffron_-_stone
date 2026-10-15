@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Driver Location Broadcast | Saffron & Stone</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..700&family=Playfair+Display:ital,wght@0,500..800;1,500..700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #20251f;
+      --muted: #6f756d;
+      --cream: #f8f6ef;
+      --paper: #fffdf8;
+      --green: #294c3a;
+      --green-dark: #1d382b;
+      --lime: #d8e4a4;
+      --orange: #d97645;
+      --line: #e7e4da;
+      --shadow: 0 14px 40px rgba(29, 56, 43, 0.08);
+      --radius: 18px;
+      --card-bg: #fffdf8;
+      --input-bg: #ffffff;
+      --input-border: #dedbd0;
+      --error-bg: #fdf2f2;
+      --error-text: #b91c1c;
+      --success-bg: #f0fdf4;
+      --success-text: #15803d;
+      --warn-bg: #fffbeb;
+      --warn-text: #b45309;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--cream);
+      color: var(--ink);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 440px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+      padding-top: 8px;
+    }
+
+    .brand-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      background: #e9eddb;
+      border-radius: 999px;
+      color: var(--green);
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 1.65rem;
+      font-weight: 700;
+      color: var(--green);
+    }
+
+    .subtitle {
+      font-size: 0.88rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    /* Screen Keep-On Warning */
+    .warning-banner {
+      background: var(--warn-bg);
+      border: 1px solid #fde68a;
+      border-radius: var(--radius);
+      padding: 14px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 0.85rem;
+      color: var(--warn-text);
+      line-height: 1.45;
+    }
+
+    .warning-banner .icon {
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+      margin-bottom: 16px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 12px 14px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      color: var(--ink);
+      background: var(--input-bg);
+      border: 1px solid var(--input-border);
+      border-radius: 12px;
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    input:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(41, 76, 58, 0.15);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 0.96rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: none;
+      transition: all 0.15s ease;
+    }
+
+    .btn-primary {
+      background: var(--green);
+      color: #fff;
+    }
+
+    .btn-primary:active {
+      background: var(--green-dark);
+      transform: scale(0.98);
+    }
+
+    .btn-stop {
+      background: #dc2626;
+      color: #fff;
+      margin-top: 10px;
+    }
+
+    .btn-stop:disabled,
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Telemetry Display */
+    .telemetry-card {
+      display: none;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .telemetry-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .telemetry-title {
+      font-weight: 700;
+      font-size: 0.88rem;
+      color: var(--green);
+    }
+
+    .live-pulse {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #16a34a;
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #16a34a;
+      box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.7);
+      animation: pulse 1.8s infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.7);
+      }
+      70% {
+        transform: scale(1);
+        box-shadow: 0 0 0 6px rgba(22, 163, 74, 0);
+      }
+      100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(22, 163, 74, 0);
+      }
+    }
+
+    .telemetry-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .tele-item {
+      background: var(--cream);
+      padding: 10px;
+      border-radius: 10px;
+    }
+
+    .tele-label {
+      font-size: 0.72rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .tele-val {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--ink);
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Status Alert Message */
+    .status-box {
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 0.84rem;
+      line-height: 1.4;
+      display: none;
+      margin-top: 12px;
+    }
+
+    .status-error {
+      background: var(--error-bg);
+      color: var(--error-text);
+      border: 1px solid #fecaca;
+    }
+
+    .status-success {
+      background: var(--success-bg);
+      color: var(--success-text);
+      border: 1px solid #bbf7d0;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: auto;
+      padding-top: 20px;
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <div class="brand-badge">Saffron & Stone · Courier</div>
+      <h1>Driver Live GPS</h1>
+      <p class="subtitle">Broadcast location to customer tracking map</p>
+    </header>
+
+    <!-- Screen On Warning -->
+    <div class="warning-banner" role="alert">
+      <div class="icon">⚠️</div>
+      <div>
+        <strong>Screen must remain ON & unlocked.</strong>
+        Mobile browsers automatically throttle or stop GPS updates if this tab is placed in background or if your phone screen locks.
+      </div>
+    </div>
+
+    <!-- Controls Card -->
+    <div class="card">
+      <div class="form-group">
+        <label for="driverKeyInput">Driver Authorization Key</label>
+        <div class="input-wrap">
+          <input type="password" id="driverKeyInput" placeholder="Enter driver key (x-driver-key)" autocomplete="off">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="orderIdInput">Order ID to Deliver</label>
+        <div class="input-wrap">
+          <input type="text" id="orderIdInput" placeholder="e.g. SS123456" autocapitalize="characters" autocomplete="off">
+        </div>
+      </div>
+
+      <button type="button" class="btn btn-primary" id="startBtn">
+        <span>▶ Start Sharing Location</span>
+      </button>
+
+      <button type="button" class="btn btn-stop" id="stopBtn" disabled>
+        <span>⏹ Stop Sharing</span>
+      </button>
+
+      <div id="statusBox" class="status-box"></div>
+    </div>
+
+    <!-- Live Telemetry Card -->
+    <div class="telemetry-card" id="telemetryCard">
+      <div class="telemetry-header">
+        <span class="telemetry-title">Live Geolocation Feed</span>
+        <div class="live-pulse">
+          <span class="pulse-dot"></span>
+          <span>Transmitting</span>
+        </div>
+      </div>
+
+      <div class="telemetry-grid">
+        <div class="tele-item">
+          <div class="tele-label">Latitude</div>
+          <div class="tele-val" id="latDisplay">--</div>
+        </div>
+        <div class="tele-item">
+          <div class="tele-label">Longitude</div>
+          <div class="tele-val" id="lngDisplay">--</div>
+        </div>
+        <div class="tele-item">
+          <div class="tele-label">Accuracy</div>
+          <div class="tele-val" id="accDisplay">--</div>
+        </div>
+        <div class="tele-item">
+          <div class="tele-label">Packets Sent</div>
+          <div class="tele-val" id="packetCount">0</div>
+        </div>
+      </div>
+
+      <div class="tele-item" style="grid-column: span 2;">
+        <div class="tele-label">Last Transmission</div>
+        <div class="tele-val" id="lastSentDisplay" style="font-size:0.85rem;">Waiting for GPS fix...</div>
+      </div>
+    </div>
+
+    <footer>
+      Protected route · Uses navigator.geolocation &amp; WakeLock
+    </footer>
+  </div>
+
+  <script>
+    const API = "http://localhost:3000";
+    const UPDATE_INTERVAL_MS = 8000; // ~8 seconds as required
+
+    // DOM Elements
+    const driverKeyInput = document.getElementById("driverKeyInput");
+    const orderIdInput = document.getElementById("orderIdInput");
+    const startBtn = document.getElementById("startBtn");
+    const stopBtn = document.getElementById("stopBtn");
+    const statusBox = document.getElementById("statusBox");
+    const telemetryCard = document.getElementById("telemetryCard");
+    const latDisplay = document.getElementById("latDisplay");
+    const lngDisplay = document.getElementById("lngDisplay");
+    const accDisplay = document.getElementById("accDisplay");
+    const packetCount = document.getElementById("packetCount");
+    const lastSentDisplay = document.getElementById("lastSentDisplay");
+
+    let isTracking = false;
+    let watchId = null;
+    let postIntervalId = null;
+    let wakeLock = null;
+    let latestPosition = null;
+    let sentCount = 0;
+
+    // Load saved driver key and query param orderId
+    const savedKey = localStorage.getItem("ss_driver_key");
+    if (savedKey) driverKeyInput.value = savedKey;
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const paramOrderId = urlParams.get("orderId") || urlParams.get("id");
+    if (paramOrderId) orderIdInput.value = paramOrderId.trim();
+
+    function showStatus(text, type = "error") {
+      statusBox.textContent = text;
+      statusBox.className = "status-box " + (type === "success" ? "status-success" : "status-error");
+      statusBox.style.display = "block";
+    }
+
+    function clearStatus() {
+      statusBox.style.display = "none";
+      statusBox.textContent = "";
+    }
+
+    // Request Screen Wake Lock to keep phone screen from sleeping
+    async function requestWakeLock() {
+      if ('wakeLock' in navigator) {
+        try {
+          wakeLock = await navigator.wakeLock.request('screen');
+        } catch (err) {
+          console.warn('Wake Lock request error:', err.message);
+        }
+      }
+    }
+
+    function releaseWakeLock() {
+      if (wakeLock) {
+        wakeLock.release().catch(() => {});
+        wakeLock = null;
+      }
+    }
+
+    // Send latest coordinates to backend
+    async function sendLocationUpdate() {
+      if (!isTracking || !latestPosition) return;
+
+      const orderId = orderIdInput.value.trim();
+      const driverKey = driverKeyInput.value.trim();
+      const lat = latestPosition.coords.latitude;
+      const lng = latestPosition.coords.longitude;
+      const accuracy = latestPosition.coords.accuracy;
+
+      try {
+        const resp = await fetch(`${API}/api/driver/location`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-driver-key": driverKey
+          },
+          body: JSON.stringify({
+            orderId,
+            lat,
+            lng
+          })
+        });
+
+        const data = await resp.json().catch(() => ({}));
+
+        if (!resp.ok) {
+          showStatus(data.error || `Server responded with ${resp.status}`, "error");
+          // If status indicates unallowed state (e.g. not out_for_delivery), show clear warning
+          return;
+        }
+
+        // Successful broadcast
+        sentCount++;
+        packetCount.textContent = sentCount;
+        const now = new Date();
+        lastSentDisplay.textContent = `Sent at ${now.toLocaleTimeString()} (lat: ${lat.toFixed(5)}, lng: ${lng.toFixed(5)})`;
+        showStatus(`Location synced successfully (Packet #${sentCount})`, "success");
+      } catch (err) {
+        showStatus(`Network failure: ${err.message}`, "error");
+      }
+    }
+
+    // Start sharing location
+    startBtn.addEventListener("click", () => {
+      clearStatus();
+      const driverKey = driverKeyInput.value.trim();
+      const orderId = orderIdInput.value.trim();
+
+      if (!driverKey) {
+        showStatus("Please enter your Driver Authorization Key.");
+        driverKeyInput.focus();
+        return;
+      }
+
+      if (!orderId) {
+        showStatus("Please enter the Order ID you are delivering.");
+        orderIdInput.focus();
+        return;
+      }
+
+      if (!navigator.geolocation) {
+        showStatus("Geolocation is not supported by your browser or device.");
+        return;
+      }
+
+      // Persist driver key locally for convenience
+      localStorage.setItem("ss_driver_key", driverKey);
+
+      isTracking = true;
+      startBtn.disabled = true;
+      stopBtn.disabled = false;
+      driverKeyInput.disabled = true;
+      orderIdInput.disabled = true;
+      telemetryCard.style.display = "block";
+      showStatus("Acquiring high-accuracy GPS fix...", "success");
+
+      requestWakeLock();
+
+      // Watch device position
+      watchId = navigator.geolocation.watchPosition(
+        (pos) => {
+          latestPosition = pos;
+          latDisplay.textContent = pos.coords.latitude.toFixed(5);
+          lngDisplay.textContent = pos.coords.longitude.toFixed(5);
+          accDisplay.textContent = `± ${Math.round(pos.coords.accuracy)}m`;
+
+          // If this is our very first fix, transmit immediately
+          if (sentCount === 0) {
+            sendLocationUpdate();
+          }
+        },
+        (err) => {
+          let msg = "GPS Error: ";
+          switch (err.code) {
+            case err.PERMISSION_DENIED:
+              msg += "Location permission denied. Please allow location access in your browser settings.";
+              break;
+            case err.POSITION_UNAVAILABLE:
+              msg += "Location information is unavailable.";
+              break;
+            case err.TIMEOUT:
+              msg += "Location request timed out. Retrying...";
+              break;
+            default:
+              msg += err.message;
+          }
+          showStatus(msg, "error");
+        },
+        {
+          enableHighAccuracy: true,
+          maximumAge: 0,
+          timeout: 10000
+        }
+      );
+
+      // Periodically transmit every ~8 seconds
+      postIntervalId = setInterval(sendLocationUpdate, UPDATE_INTERVAL_MS);
+    });
+
+    // Stop sharing location
+    stopBtn.addEventListener("click", () => {
+      isTracking = false;
+      if (watchId !== null) {
+        navigator.geolocation.clearWatch(watchId);
+        watchId = null;
+      }
+      if (postIntervalId !== null) {
+        clearInterval(postIntervalId);
+        postIntervalId = null;
+      }
+      releaseWakeLock();
+
+      startBtn.disabled = false;
+      stopBtn.disabled = true;
+      driverKeyInput.disabled = false;
+      orderIdInput.disabled = false;
+      showStatus("Location broadcast stopped.", "success");
+    });
+  </script>
+</body>
+</html>

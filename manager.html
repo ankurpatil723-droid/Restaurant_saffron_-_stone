@@ -1,0 +1,2172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manager Dashboard — Live 10-Min Dispatch | Saffron &amp; Stone</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..800;1,9..40,300..800&family=Playfair+Display:ital,wght@0,600;0,800;1,600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #1e241e;
+      --muted: #667064;
+      --cream: #f6f4ed;
+      --paper: #ffffff;
+      --card-bg: #ffffff;
+      --green: #254a37;
+      --green-dark: #173224;
+      --green-light: #e8f3ec;
+      --lime: #cde088;
+      --orange: #dc6b34;
+      --orange-light: #fef0e9;
+      --red: #d32f2f;
+      --red-light: #fde8e8;
+      --amber: #d97706;
+      --amber-light: #fef3c7;
+      --blue: #2563eb;
+      --blue-light: #eff6ff;
+      --line: #e4e0d4;
+      --line-subtle: #eeebd4;
+      --shadow-sm: 0 2px 6px rgba(23, 50, 36, 0.05);
+      --shadow: 0 10px 30px rgba(23, 50, 36, 0.08);
+      --shadow-lg: 0 20px 45px rgba(23, 50, 36, 0.14);
+      --radius: 14px;
+      --radius-sm: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--cream);
+      color: var(--ink);
+      line-height: 1.45;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Navigation Bar */
+    .topbar {
+      background: var(--paper);
+      border-bottom: 1px solid var(--line);
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-logo {
+      width: 36px;
+      height: 36px;
+      background: var(--green);
+      color: #fff;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+
+    .brand-title {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--green-dark);
+      letter-spacing: -0.01em;
+    }
+
+    .badge-live-pulse {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--green-light);
+      color: var(--green-dark);
+      font-size: 0.74rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      background: #10b981;
+      border-radius: 50%;
+      box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+      animation: pulse 1.8s infinite;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+      70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn {
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border: 1px solid transparent;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: var(--green);
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background: var(--green-dark);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border-color: var(--line);
+      color: var(--ink);
+    }
+    .btn-outline:hover {
+      background: rgba(0, 0, 0, 0.04);
+      border-color: var(--muted);
+    }
+
+    .btn-sm {
+      padding: 6px 10px;
+      font-size: 0.78rem;
+    }
+
+    .btn-danger {
+      background: var(--red-light);
+      color: var(--red);
+      border-color: rgba(211, 47, 47, 0.2);
+    }
+    .btn-danger:hover {
+      background: var(--red);
+      color: #fff;
+    }
+
+    .btn-success {
+      background: var(--green-light);
+      color: var(--green-dark);
+      border-color: rgba(37, 74, 55, 0.2);
+    }
+    .btn-success:hover {
+      background: var(--green);
+      color: #fff;
+    }
+
+    /* Main Container */
+    .dashboard-container {
+      max-width: 1700px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 16px 20px 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      flex: 1;
+    }
+
+    /* Stats Strip */
+    .stats-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+    }
+
+    .stat-card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .stat-meta {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--muted);
+      letter-spacing: 0.03em;
+    }
+
+    .stat-value {
+      font-size: 1.65rem;
+      font-weight: 800;
+      color: var(--ink);
+      line-height: 1.15;
+      margin-top: 4px;
+    }
+
+    .stat-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      font-size: 1.3rem;
+      background: var(--cream);
+    }
+
+    .stat-card.alert-late .stat-value {
+      color: var(--red);
+    }
+    .stat-card.alert-late .stat-icon {
+      background: var(--red-light);
+      color: var(--red);
+    }
+
+    .stat-card.alert-confirm .stat-value {
+      color: var(--orange);
+    }
+    .stat-card.alert-confirm .stat-icon {
+      background: var(--orange-light);
+      color: var(--orange);
+    }
+
+    /* Controls Bar: Search, View Toggle, Filter */
+    .controls-bar {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 12px 16px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .search-filter-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+      min-width: 280px;
+    }
+
+    .search-input-wrap {
+      position: relative;
+      flex: 1;
+      max-width: 380px;
+    }
+
+    .search-input-wrap svg {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      pointer-events: none;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 8px 12px 8px 36px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--cream);
+      font-family: inherit;
+      font-size: 0.86rem;
+      outline: none;
+      transition: all 0.15s ease;
+    }
+    .search-input:focus {
+      border-color: var(--green);
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(37, 74, 55, 0.1);
+    }
+
+    .filter-pills {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+
+    .filter-pill {
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: var(--cream);
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+    }
+    .filter-pill.active {
+      background: var(--green);
+      color: #fff;
+      border-color: var(--green);
+    }
+
+    .view-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .view-toggle {
+      display: flex;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      background: var(--cream);
+    }
+
+    .view-toggle-btn {
+      padding: 6px 12px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.15s ease;
+    }
+    .view-toggle-btn.active {
+      background: #fff;
+      color: var(--green-dark);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    }
+
+    /* Live Board (Kanban Columns) */
+    .kanban-board {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(260px, 1fr));
+      gap: 14px;
+      overflow-x: auto;
+      padding-bottom: 12px;
+      min-height: 540px;
+      align-items: start;
+    }
+
+    .kanban-col {
+      background: #fbf9f4;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      display: flex;
+      flex-direction: column;
+      max-height: calc(100vh - 240px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .kanban-header {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--paper);
+      border-top-left-radius: var(--radius);
+      border-top-right-radius: var(--radius);
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+
+    .kanban-title {
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .status-badge-count {
+      background: var(--cream);
+      border: 1px solid var(--line);
+      padding: 2px 7px;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: var(--muted);
+    }
+
+    .kanban-cards {
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    /* Order Card */
+    .order-card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      box-shadow: var(--shadow-sm);
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+      position: relative;
+    }
+    .order-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+      border-color: var(--green);
+    }
+
+    .order-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .order-id-badge {
+      font-family: monospace;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--green-dark);
+      background: var(--green-light);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    /* Live Countdown Pill */
+    .countdown-pill {
+      font-size: 0.73rem;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      letter-spacing: 0.02em;
+    }
+    .countdown-pill.safe {
+      background: #e6f4ea;
+      color: #137333;
+    }
+    .countdown-pill.warning {
+      background: var(--amber-light);
+      color: var(--amber);
+    }
+    .countdown-pill.late {
+      background: var(--red-light);
+      color: var(--red);
+      animation: flashLate 1.5s infinite;
+    }
+
+    @keyframes flashLate {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.65; }
+    }
+
+    .customer-line {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--ink);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .items-summary {
+      font-size: 0.77rem;
+      color: var(--muted);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      line-height: 1.35;
+    }
+
+    .request-snippet {
+      font-size: 0.73rem;
+      color: var(--orange);
+      background: var(--orange-light);
+      padding: 3px 6px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 6px;
+      border-top: 1px dashed var(--line);
+      margin-top: 2px;
+      gap: 6px;
+    }
+
+    .order-total-price {
+      font-size: 0.88rem;
+      font-weight: 800;
+      color: var(--ink);
+    }
+
+    /* Delivery Confirmation Badge */
+    .confirm-badge {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+    .confirm-badge.confirmed {
+      background: #e6f4ea;
+      color: #137333;
+    }
+    .confirm-badge.pending {
+      background: #f1f3f4;
+      color: var(--muted);
+    }
+    .confirm-badge.flagged-red {
+      background: var(--red-light);
+      color: var(--red);
+      font-weight: 800;
+      border: 1px solid rgba(211, 47, 47, 0.4);
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 4px;
+      width: 100%;
+      margin-top: 4px;
+    }
+
+    .card-actions .btn {
+      flex: 1;
+      justify-content: center;
+    }
+
+    /* List View Table */
+    .list-view-container {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      overflow-x: auto;
+      display: none;
+    }
+
+    .orders-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.86rem;
+    }
+
+    .orders-table th {
+      background: var(--cream);
+      padding: 12px 14px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .orders-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: middle;
+    }
+
+    .orders-table tr:hover td {
+      background: #fbf9f4;
+      cursor: pointer;
+    }
+
+    /* Slide-in Order Detail Drawer */
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(18, 30, 22, 0.4);
+      backdrop-filter: blur(2px);
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .drawer-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 100%;
+      max-width: 620px;
+      height: 100vh;
+      background: var(--paper);
+      box-shadow: -10px 0 40px rgba(0, 0, 0, 0.2);
+      z-index: 101;
+      transform: translateX(100%);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+    }
+    .drawer.active {
+      transform: translateX(0);
+    }
+
+    .drawer-header {
+      padding: 18px 22px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: #faf8f2;
+    }
+
+    .drawer-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .drawer-title {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--green-dark);
+    }
+
+    .drawer-close-btn {
+      background: transparent;
+      border: none;
+      font-size: 1.4rem;
+      cursor: pointer;
+      color: var(--muted);
+      padding: 4px;
+      border-radius: 6px;
+      line-height: 1;
+    }
+    .drawer-close-btn:hover {
+      background: rgba(0, 0, 0, 0.05);
+      color: var(--ink);
+    }
+
+    .drawer-body {
+      padding: 20px 22px;
+      overflow-y: auto;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .drawer-section {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+    }
+
+    .section-headline {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .customer-info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      font-size: 0.86rem;
+    }
+
+    .info-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .info-label {
+      font-size: 0.72rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .info-value {
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .tel-link {
+      color: var(--green);
+      text-decoration: none;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .tel-link:hover {
+      text-decoration: underline;
+    }
+
+    /* Side-by-side Fulfillment Comparison */
+    .fulfillment-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.84rem;
+    }
+
+    .fulfillment-table th {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      color: var(--muted);
+      border-bottom: 1px solid var(--line);
+      padding: 8px 6px;
+      text-align: left;
+    }
+
+    .fulfillment-table td {
+      padding: 10px 6px;
+      border-bottom: 1px solid var(--line-subtle);
+      vertical-align: top;
+    }
+
+    .item-status-selector {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 6px;
+    }
+
+    .item-status-pill {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--cream);
+      cursor: pointer;
+    }
+    .item-status-pill.active-fulfilled {
+      background: var(--green-light);
+      color: var(--green-dark);
+      border-color: var(--green);
+    }
+    .item-status-pill.active-modified {
+      background: var(--amber-light);
+      color: var(--amber);
+      border-color: var(--amber);
+    }
+    .item-status-pill.active-unavailable {
+      background: var(--red-light);
+      color: var(--red);
+      border-color: var(--red);
+    }
+
+    .fulfillment-note-input {
+      width: 100%;
+      padding: 6px 8px;
+      font-family: inherit;
+      font-size: 0.78rem;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #faf8f2;
+      outline: none;
+    }
+    .fulfillment-note-input:focus {
+      background: #fff;
+      border-color: var(--green);
+    }
+
+    /* Status Timeline */
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      position: relative;
+      padding-left: 20px;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      top: 6px;
+      bottom: 6px;
+      left: 7px;
+      width: 2px;
+      background: var(--line);
+    }
+
+    .timeline-step {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .timeline-dot {
+      position: absolute;
+      left: -20px;
+      top: 3px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #fff;
+      border: 3px solid var(--green);
+    }
+
+    .timeline-step-title {
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .timeline-step-time {
+      font-size: 0.73rem;
+      color: var(--muted);
+    }
+
+    .timeline-step-reason {
+      font-size: 0.75rem;
+      color: var(--red);
+      background: var(--red-light);
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-top: 2px;
+      display: inline-block;
+    }
+
+    .drawer-footer {
+      padding: 16px 22px;
+      border-top: 1px solid var(--line);
+      background: #faf8f2;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .drawer-footer .btn {
+      flex: 1;
+      justify-content: center;
+    }
+
+    /* Modal for Reject / Cancel Reason */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: 120;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-card {
+      background: #fff;
+      border-radius: var(--radius);
+      padding: 22px;
+      max-width: 440px;
+      width: 100%;
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .modal-title {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--red);
+    }
+
+    .reason-textarea {
+      width: 100%;
+      min-height: 80px;
+      padding: 10px;
+      font-family: inherit;
+      font-size: 0.88rem;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      resize: vertical;
+      outline: none;
+    }
+    .reason-textarea:focus {
+      border-color: var(--red);
+    }
+
+    /* Passkey Login Screen (Protection Barrier) */
+    .auth-barrier {
+      position: fixed;
+      inset: 0;
+      background: var(--cream);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .auth-box {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 32px 28px;
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .auth-box h2 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 1.6rem;
+      color: var(--green);
+    }
+
+    .auth-input {
+      padding: 10px 14px;
+      font-size: 0.95rem;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-family: inherit;
+      outline: none;
+      text-align: center;
+    }
+    .auth-input:focus {
+      border-color: var(--green);
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--green-dark);
+      color: #fff;
+      padding: 12px 18px;
+      border-radius: 10px;
+      box-shadow: var(--shadow-lg);
+      font-size: 0.86rem;
+      font-weight: 600;
+      z-index: 300;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    @media (max-width: 1024px) {
+      .kanban-board {
+        grid-template-columns: repeat(3, minmax(280px, 1fr));
+      }
+    }
+
+    @media (max-width: 680px) {
+      .kanban-board {
+        grid-template-columns: 1fr;
+      }
+      .controls-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .search-input-wrap {
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Protection Barrier (Manager Role Check) -->
+  <div class="auth-barrier" id="authBarrier" style="display: none;">
+    <div class="auth-box">
+      <div style="font-size: 2.2rem;">🔒</div>
+      <h2>Manager Access</h2>
+      <p style="font-size: 0.85rem; color: var(--muted);">Please enter your restaurant manager passkey to unlock the live dispatch radar.</p>
+      <input type="password" id="managerKeyInput" class="auth-input" placeholder="Enter Manager Passkey" autofocus>
+      <button class="btn btn-primary" id="loginBtn" style="justify-content: center; padding: 10px;">Unlock Dashboard →</button>
+      <div id="authError" style="font-size: 0.8rem; color: var(--red); display: none;"></div>
+      <span style="font-size: 0.74rem; color: var(--muted);">Default key: <code>manager123</code></span>
+    </div>
+  </div>
+
+  <!-- Topbar -->
+  <header class="topbar">
+    <div class="brand-wrap">
+      <div class="brand-logo">🌿</div>
+      <div>
+        <div class="brand-title">Saffron &amp; Stone</div>
+        <div style="font-size: 0.72rem; color: var(--muted); font-weight: 600;">Manager Dispatch Console • 10-Min Delivery</div>
+      </div>
+      <div class="badge-live-pulse">
+        <span class="pulse-dot"></span>
+        <span id="sseStatusText">LIVE SSE RADAR</span>
+      </div>
+    </div>
+
+    <div class="topbar-actions">
+      <button class="btn btn-outline btn-sm" id="soundToggleBtn" title="Toggle order alert chime">
+        <span id="soundIcon">🔔</span> Sound ON
+      </button>
+      <button class="btn btn-outline btn-sm" id="refreshBtn" title="Force Refresh">
+        🔄 Refresh
+      </button>
+      <a href="/" class="btn btn-outline btn-sm" target="_blank" title="Open Storefront">
+        🏪 Store
+      </a>
+      <button class="btn btn-danger btn-sm" id="logoutBtn" title="Log out">
+        🚪 Logout
+      </button>
+    </div>
+  </header>
+
+  <!-- Dashboard Main Container -->
+  <main class="dashboard-container">
+    
+    <!-- Stats Strip -->
+    <section class="stats-strip" aria-label="Key Performance Metrics">
+      <div class="stat-card">
+        <div class="stat-meta">
+          <span class="stat-label">Today's Orders</span>
+          <span class="stat-value" id="statTodayOrders">0</span>
+        </div>
+        <div class="stat-icon">📦</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-meta">
+          <span class="stat-label">Avg Fulfilment Time</span>
+          <span class="stat-value" id="statAvgTime">8.4m</span>
+        </div>
+        <div class="stat-icon">⚡</div>
+      </div>
+
+      <div class="stat-card alert-late" id="statLateCard">
+        <div class="stat-meta">
+          <span class="stat-label">Late Orders (>10m)</span>
+          <span class="stat-value" id="statLateOrders">0</span>
+        </div>
+        <div class="stat-icon">⏱️</div>
+      </div>
+
+      <div class="stat-card alert-confirm" id="statPendingCard">
+        <div class="stat-meta">
+          <span class="stat-label">Pending Confirmation</span>
+          <span class="stat-value" id="statPendingConfirmations">0</span>
+        </div>
+        <div class="stat-icon">📬</div>
+      </div>
+    </section>
+
+    <!-- Controls Bar -->
+    <section class="controls-bar">
+      <div class="search-filter-group">
+        <div class="search-input-wrap">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" id="searchInput" class="search-input" placeholder="Search Order ID, Customer Name, Phone...">
+        </div>
+
+        <div class="filter-pills">
+          <button class="filter-pill active" data-filter="all">All (<span id="countAll">0</span>)</button>
+          <button class="filter-pill" data-filter="active">Active (<span id="countActive">0</span>)</button>
+          <button class="filter-pill" data-filter="late">Late ⚠️ (<span id="countLate">0</span>)</button>
+          <button class="filter-pill" data-filter="delivered">Delivered (<span id="countDelivered">0</span>)</button>
+          <button class="filter-pill" data-filter="cancelled">Cancelled (<span id="countCancelled">0</span>)</button>
+        </div>
+      </div>
+
+      <div class="view-actions">
+        <div class="view-toggle">
+          <button class="view-toggle-btn active" id="btnBoardView">
+            <span>📋</span> Board
+          </button>
+          <button class="view-toggle-btn" id="btnListView">
+            <span>📑</span> List
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Live Board (Kanban Columns) -->
+    <section class="kanban-board" id="kanbanBoard">
+      <!-- 1. Placed -->
+      <div class="kanban-col" data-col="placed">
+        <div class="kanban-header">
+          <span class="kanban-title">📥 Placed <span class="status-badge-count" id="badgePlaced">0</span></span>
+        </div>
+        <div class="kanban-cards" id="cardsPlaced"></div>
+      </div>
+
+      <!-- 2. Accepted -->
+      <div class="kanban-col" data-col="accepted">
+        <div class="kanban-header">
+          <span class="kanban-title">✅ Accepted <span class="status-badge-count" id="badgeAccepted">0</span></span>
+        </div>
+        <div class="kanban-cards" id="cardsAccepted"></div>
+      </div>
+
+      <!-- 3. Preparing -->
+      <div class="kanban-col" data-col="preparing">
+        <div class="kanban-header">
+          <span class="kanban-title">🍳 Preparing <span class="status-badge-count" id="badgePreparing">0</span></span>
+        </div>
+        <div class="kanban-cards" id="cardsPreparing"></div>
+      </div>
+
+      <!-- 4. Ready -->
+      <div class="kanban-col" data-col="ready">
+        <div class="kanban-header">
+          <span class="kanban-title">🥡 Ready <span class="status-badge-count" id="badgeReady">0</span></span>
+        </div>
+        <div class="kanban-cards" id="cardsReady"></div>
+      </div>
+
+      <!-- 5. Out for Delivery -->
+      <div class="kanban-col" data-col="out_for_delivery">
+        <div class="kanban-header">
+          <span class="kanban-title">🛵 Out for Delivery <span class="status-badge-count" id="badgeOutForDelivery">0</span></span>
+        </div>
+        <div class="kanban-cards" id="cardsOutForDelivery"></div>
+      </div>
+
+      <!-- 6. Delivered -->
+      <div class="kanban-col" data-col="delivered">
+        <div class="kanban-header">
+          <span class="kanban-title">🎉 Delivered <span class="status-badge-count" id="badgeDelivered">0</span></span>
+        </div>
+        <div class="kanban-cards" id="cardsDelivered"></div>
+      </div>
+    </section>
+
+    <!-- List View Table -->
+    <section class="list-view-container" id="listView">
+      <table class="orders-table">
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Customer</th>
+            <th>Items</th>
+            <th>Placed At</th>
+            <th>Promised In</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th>Confirmation</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="listTableBody"></tbody>
+      </table>
+    </section>
+
+  </main>
+
+  <!-- Order Detail Slide-in Drawer -->
+  <div class="drawer-overlay" id="drawerOverlay"></div>
+  <aside class="drawer" id="orderDrawer" aria-label="Order Details Drawer">
+    <div class="drawer-header">
+      <div class="drawer-title-wrap">
+        <span class="order-id-badge" id="drawerOrderId">#SS000000</span>
+        <h3 class="drawer-title">Order Details</h3>
+      </div>
+      <button class="drawer-close-btn" id="drawerCloseBtn" title="Close Drawer">&times;</button>
+    </div>
+
+    <div class="drawer-body" id="drawerBody">
+      <!-- 1. Customer Info -->
+      <div class="drawer-section">
+        <div class="section-headline">
+          <span>Customer Information</span>
+          <span id="drawerCountdownPill" class="countdown-pill safe">--:--</span>
+        </div>
+        <div class="customer-info-grid">
+          <div class="info-item">
+            <span class="info-label">Name</span>
+            <span class="info-value" id="drawerCustName">-</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Phone</span>
+            <span class="info-value">
+              <a href="#" class="tel-link" id="drawerCustPhone">
+                📞 <span id="drawerCustPhoneText">-</span>
+              </a>
+            </span>
+          </div>
+          <div class="info-item" style="grid-column: span 2;">
+            <span class="info-label">Delivery Address</span>
+            <span class="info-value" id="drawerCustAddress">-</span>
+          </div>
+          <div class="info-item" style="grid-column: span 2;">
+            <span class="info-label">Landmark</span>
+            <span class="info-value" id="drawerCustLandmark">-</span>
+          </div>
+          <div class="info-item" style="grid-column: span 2;" id="drawerNotesWrap">
+            <span class="info-label">Customer Special Request / Notes</span>
+            <span class="info-value request-snippet" style="white-space: normal; margin-top: 4px;" id="drawerCustNotes">-</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. Side-by-side Fulfillment Comparison -->
+      <div class="drawer-section">
+        <div class="section-headline">
+          <span>Customer Requested vs Actual Order</span>
+          <button class="btn btn-outline btn-sm" id="saveFulfillmentBtn">💾 Save Changes</button>
+        </div>
+        <p style="font-size: 0.76rem; color: var(--muted); margin-bottom: 10px;">
+          Mark kitchen status for each requested item and add substitution / fulfillment notes:
+        </p>
+        <table class="fulfillment-table">
+          <thead>
+            <tr>
+              <th style="width: 45%;">Requested Item &amp; Customizations</th>
+              <th style="width: 55%;">Kitchen Fulfillment &amp; Notes</th>
+            </tr>
+          </thead>
+          <tbody id="drawerFulfillmentBody"></tbody>
+        </table>
+      </div>
+
+      <!-- 3. Payment Details -->
+      <div class="drawer-section">
+        <div class="section-headline">Payment &amp; Confirmation</div>
+        <div class="customer-info-grid">
+          <div class="info-item">
+            <span class="info-label">Payment Method</span>
+            <span class="info-value" id="drawerPayMethod">-</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Payment Status</span>
+            <span class="info-value" id="drawerPayStatus">-</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Order Total</span>
+            <span class="info-value" style="font-size: 1.1rem; color: var(--green);" id="drawerOrderTotal">-</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Delivery Receipt</span>
+            <span class="info-value" id="drawerConfirmBadge">-</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. Status Timeline -->
+      <div class="drawer-section">
+        <div class="section-headline">Lifecycle Timeline</div>
+        <div class="timeline" id="drawerTimeline"></div>
+      </div>
+    </div>
+
+    <!-- Drawer Footer Actions -->
+    <div class="drawer-footer" id="drawerFooter">
+      <button class="btn btn-danger btn-sm" id="drawerRejectBtn">✕ Cancel / Reject</button>
+      <button class="btn btn-primary" id="drawerNextBtn">Move to Next Status →</button>
+    </div>
+  </aside>
+
+  <!-- Modal for Reject / Cancel Reason -->
+  <div class="modal-overlay" id="reasonModal">
+    <div class="modal-card">
+      <h3 class="modal-title" id="modalTitle">Reject / Cancel Order</h3>
+      <p style="font-size: 0.84rem; color: var(--muted);">
+        A specific cancellation reason is required for order auditing and customer notifications:
+      </p>
+      <textarea id="reasonInput" class="reason-textarea" placeholder="E.g., Out of ingredients, Delivery address unserviceable, Customer requested cancellation..."></textarea>
+      <div style="display: flex; gap: 8px; justify-content: flex-end;">
+        <button class="btn btn-outline" id="modalCancelBtn">Dismiss</button>
+        <button class="btn btn-danger" id="modalConfirmBtn">Confirm Cancellation</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toastBox">
+    <span>🔔</span>
+    <span id="toastMsg">New order received!</span>
+  </div>
+
+  <script>
+    // Configuration & State
+    const API = '';
+    const POLL_INTERVAL_MS = 5000;
+    let managerKey = localStorage.getItem('ss_manager_key') || 'manager123';
+    let orders = [];
+    let currentFilter = 'all';
+    let currentView = 'board';
+    let searchQuery = '';
+    let selectedOrder = null;
+    let sseEventSource = null;
+    let soundEnabled = true;
+    let cancelTargetOrderId = null;
+
+    // Web Audio API Synthesized Chime (Zero External Files!)
+    let audioCtx = null;
+    function playOrderChime() {
+      if (!soundEnabled) return;
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!audioCtx) audioCtx = new AudioContext();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+
+        osc.type = 'sine';
+        // Elegant two-tone bell chime
+        osc.frequency.setValueAtTime(587.33, now); // D5
+        osc.frequency.exponentialRampToValueAtTime(880, now + 0.15); // A5
+
+        gain.gain.setValueAtTime(0, now);
+        gain.gain.linearRampToValueAtTime(0.3, now + 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.9);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.9);
+      } catch (e) {
+        console.warn('Audio chime note failed:', e);
+      }
+    }
+
+    // Pipeline mapping & labels
+    const PIPELINE_STEPS = {
+      placed: { label: 'Placed', next: 'accepted', action: 'Accept Order →' },
+      accepted: { label: 'Accepted', next: 'preparing', action: 'Start Prep 🍳 →' },
+      preparing: { label: 'Preparing', next: 'ready', action: 'Mark Ready 🥡 →' },
+      ready: { label: 'Ready', next: 'out_for_delivery', action: 'Dispatch 🛵 →' },
+      out_for_delivery: { label: 'Out for Delivery', next: 'delivered', action: 'Confirm Delivered ✓' },
+      delivered: { label: 'Delivered', next: null, action: null },
+      rejected: { label: 'Rejected', next: null, action: null },
+      cancelled: { label: 'Cancelled', next: null, action: null }
+    };
+
+    // UI Helpers
+    function showToast(msg) {
+      const box = document.getElementById('toastBox');
+      const text = document.getElementById('toastMsg');
+      text.textContent = msg;
+      box.classList.add('show');
+      setTimeout(() => box.classList.remove('show'), 3500);
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    // Calculate Remaining Time & Countdown Format
+    function getRemainingTime(promisedBy) {
+      if (!promisedBy) return { text: '--:--', ms: 0, isLate: false, pillClass: 'safe' };
+      const diff = new Date(promisedBy).getTime() - Date.now();
+      if (diff <= 0) {
+        const overdueMin = Math.abs(Math.floor(diff / 60000));
+        const overdueSec = Math.abs(Math.floor((diff % 60000) / 1000));
+        return {
+          text: `LATE -${overdueMin}m ${overdueSec}s`,
+          ms: diff,
+          isLate: true,
+          pillClass: 'late'
+        };
+      }
+      const min = Math.floor(diff / 60000);
+      const sec = Math.floor((diff % 60000) / 1000);
+      const formatted = `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+      if (diff <= 4 * 60 * 1000) {
+        return { text: formatted, ms: diff, isLate: false, pillClass: 'warning' };
+      }
+      return { text: formatted, ms: diff, isLate: false, pillClass: 'safe' };
+    }
+
+    // Delivery confirmation badge helper
+    function getConfirmationBadge(order) {
+      if (order.delivery_confirmed) {
+        const timeStr = order.delivery_confirmed_at 
+          ? new Date(order.delivery_confirmed_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          : '';
+        return `<span class="confirm-badge confirmed" title="Customer received order">Received ✓ ${timeStr}</span>`;
+      }
+      // Flag red if delivered and > 10 min without confirmation!
+      if (order.status === 'delivered') {
+        const deliveredTime = new Date(order.delivered_at || order.placed_at || 0).getTime();
+        const minSinceDelivery = (Date.now() - deliveredTime) / 60000;
+        if (minSinceDelivery >= 10) {
+          return `<span class="confirm-badge flagged-red" title="Delivered > 10m ago with no customer confirmation">⚠️ Unconfirmed (>10m)</span>`;
+        }
+      }
+      return `<span class="confirm-badge pending">Not confirmed yet</span>`;
+    }
+
+    // Authentication Checks
+    async function verifyAuth(key) {
+      try {
+        const res = await fetch(`${API}/api/manager/verify`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ key })
+        });
+        if (res.ok) {
+          managerKey = key;
+          localStorage.setItem('ss_manager_key', key);
+          document.getElementById('authBarrier').style.display = 'none';
+          initManagerApp();
+          return true;
+        }
+      } catch (e) {}
+      return false;
+    }
+
+    // Fetch Orders API
+    async function fetchOrders() {
+      try {
+        const res = await fetch(`${API}/api/manager/orders`, {
+          headers: { 'x-manager-key': managerKey }
+        });
+        if (res.status === 401) {
+          document.getElementById('authBarrier').style.display = 'flex';
+          return;
+        }
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        orders = data.orders || [];
+        renderAll();
+      } catch (err) {
+        console.warn('Fetch orders failed:', err.message);
+      }
+    }
+
+    // Setup SSE Real-time stream with automatic polling fallback
+    function initSSE() {
+      if (sseEventSource) sseEventSource.close();
+      const sseText = document.getElementById('sseStatusText');
+
+      try {
+        sseEventSource = new EventSource(`${API}/api/manager/events?key=${encodeURIComponent(managerKey)}`);
+
+        sseEventSource.addEventListener('connected', () => {
+          sseText.textContent = 'LIVE SSE RADAR';
+        });
+
+        sseEventSource.addEventListener('new_order', (e) => {
+          try {
+            const newOrd = JSON.parse(e.data);
+            const exists = orders.find(o => o.order_id === newOrd.order_id);
+            if (!exists) {
+              orders.unshift(newOrd);
+              playOrderChime();
+              showToast(`New Order #${newOrd.order_id} received from ${newOrd.name}!`);
+              renderAll();
+            }
+          } catch (err) {}
+        });
+
+        sseEventSource.addEventListener('order_updated', (e) => {
+          try {
+            const updated = JSON.parse(e.data);
+            const idx = orders.findIndex(o => o.order_id === updated.order_id);
+            if (idx !== -1) {
+              orders[idx] = updated;
+            } else {
+              orders.unshift(updated);
+            }
+            if (selectedOrder && selectedOrder.order_id === updated.order_id) {
+              openDrawer(updated);
+            }
+            renderAll();
+          } catch (err) {}
+        });
+
+        sseEventSource.addEventListener('delivery_confirmed', (e) => {
+          try {
+            const data = JSON.parse(e.data);
+            const target = orders.find(o => o.order_id === data.order_id);
+            if (target) {
+              target.delivery_confirmed = true;
+              target.delivery_confirmed_at = data.delivery_confirmed_at;
+              showToast(`Customer confirmed delivery for #${target.order_id} ✓`);
+              if (selectedOrder && selectedOrder.order_id === target.order_id) {
+                openDrawer(target);
+              }
+              renderAll();
+            }
+          } catch (err) {}
+        });
+
+        sseEventSource.onerror = () => {
+          sseText.textContent = 'POLLING RADAR (5s)';
+        };
+      } catch (e) {
+        sseText.textContent = 'POLLING RADAR (5s)';
+      }
+    }
+
+    // Action: Move to Next Status
+    async function advanceStatus(orderId, targetStatus = null) {
+      try {
+        const res = await fetch(`${API}/api/manager/orders/${orderId}/transition`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-manager-key': managerKey
+          },
+          body: JSON.stringify({ targetStatus })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          alert(`Transition error: ${data.error || 'Failed to update'}`);
+          return;
+        }
+        showToast(`Order #${orderId} moved to ${data.order.status}`);
+        const idx = orders.findIndex(o => o.order_id === orderId);
+        if (idx !== -1) orders[idx] = data.order;
+        if (selectedOrder && selectedOrder.order_id === orderId) {
+          openDrawer(data.order);
+        }
+        renderAll();
+      } catch (err) {
+        alert('Network error while updating status');
+      }
+    }
+
+    // Action: Cancel / Reject with Reason
+    function promptCancelOrder(orderId) {
+      cancelTargetOrderId = orderId;
+      document.getElementById('reasonInput').value = '';
+      document.getElementById('reasonModal').classList.add('active');
+    }
+
+    async function executeCancellation() {
+      const reason = document.getElementById('reasonInput').value.trim();
+      if (!reason) {
+        alert('A cancellation reason is required.');
+        return;
+      }
+      try {
+        const res = await fetch(`${API}/api/manager/orders/${cancelTargetOrderId}/transition`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-manager-key': managerKey
+          },
+          body: JSON.stringify({ targetStatus: 'cancelled', reason })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          alert(`Error: ${data.error || 'Failed to cancel'}`);
+          return;
+        }
+        document.getElementById('reasonModal').classList.remove('active');
+        showToast(`Order #${cancelTargetOrderId} Cancelled`);
+        const idx = orders.findIndex(o => o.order_id === cancelTargetOrderId);
+        if (idx !== -1) orders[idx] = data.order;
+        if (selectedOrder && selectedOrder.order_id === cancelTargetOrderId) {
+          openDrawer(data.order);
+        }
+        renderAll();
+      } catch (e) {
+        alert('Network error during cancellation');
+      }
+    }
+
+    // Render Stats Strip
+    function renderStats() {
+      const today = new Date().toDateString();
+      const todayOrders = orders.filter(o => new Date(o.placed_at || o.created_at || 0).toDateString() === today);
+      document.getElementById('statTodayOrders').textContent = todayOrders.length || orders.length;
+
+      let lateCount = 0;
+      let pendingConfirmCount = 0;
+      let totalDeliveryTimeMs = 0;
+      let deliveredCount = 0;
+
+      for (const ord of orders) {
+        if (!['delivered', 'cancelled', 'rejected'].includes(ord.status)) {
+          const rem = getRemainingTime(ord.promised_by);
+          if (rem.isLate) lateCount++;
+        }
+        if (ord.status === 'delivered') {
+          deliveredCount++;
+          if (!ord.delivery_confirmed) {
+            pendingConfirmCount++;
+          }
+          if (ord.placed_at && ord.delivered_at) {
+            totalDeliveryTimeMs += (new Date(ord.delivered_at) - new Date(ord.placed_at));
+          }
+        }
+      }
+
+      document.getElementById('statLateOrders').textContent = lateCount;
+      document.getElementById('statPendingConfirmations').textContent = pendingConfirmCount;
+
+      if (deliveredCount > 0 && totalDeliveryTimeMs > 0) {
+        const avgMin = (totalDeliveryTimeMs / deliveredCount / 60000).toFixed(1);
+        document.getElementById('statAvgTime').textContent = `${avgMin}m`;
+      } else {
+        document.getElementById('statAvgTime').textContent = '7.5m';
+      }
+    }
+
+    // Filter and Search Matching
+    function getFilteredOrders() {
+      return orders.filter(ord => {
+        // Status filter
+        if (currentFilter === 'active') {
+          if (['delivered', 'cancelled', 'rejected'].includes(ord.status)) return false;
+        } else if (currentFilter === 'late') {
+          const rem = getRemainingTime(ord.promised_by);
+          if (!rem.isLate || ['delivered', 'cancelled', 'rejected'].includes(ord.status)) return false;
+        } else if (currentFilter === 'delivered') {
+          if (ord.status !== 'delivered') return false;
+        } else if (currentFilter === 'cancelled') {
+          if (!['cancelled', 'rejected'].includes(ord.status)) return false;
+        }
+
+        // Search query
+        if (searchQuery) {
+          const q = searchQuery.toLowerCase();
+          const matchId = String(ord.order_id).toLowerCase().includes(q);
+          const matchName = String(ord.name || '').toLowerCase().includes(q);
+          const matchPhone = String(ord.phone || '').toLowerCase().includes(q);
+          if (!matchId && !matchName && !matchPhone) return false;
+        }
+        return true;
+      });
+    }
+
+    // Render Kanban Cards
+    function renderBoard(filteredList) {
+      const colMap = {
+        placed: document.getElementById('cardsPlaced'),
+        accepted: document.getElementById('cardsAccepted'),
+        preparing: document.getElementById('cardsPreparing'),
+        ready: document.getElementById('cardsReady'),
+        out_for_delivery: document.getElementById('cardsOutForDelivery'),
+        delivered: document.getElementById('cardsDelivered')
+      };
+
+      // Reset
+      Object.values(colMap).forEach(el => el.innerHTML = '');
+      const counts = { placed: 0, accepted: 0, preparing: 0, ready: 0, out_for_delivery: 0, delivered: 0 };
+
+      filteredList.forEach(ord => {
+        const st = ord.status || 'placed';
+        if (counts[st] !== undefined) counts[st]++;
+        const container = colMap[st];
+        if (!container) return;
+
+        const countdown = getRemainingTime(ord.promised_by);
+        const nextCfg = PIPELINE_STEPS[st];
+        const itemsText = Array.isArray(ord.items) 
+          ? ord.items.map(i => `${i.qty}x ${i.name}`).join(', ')
+          : 'Items';
+
+        const card = document.createElement('div');
+        card.className = 'order-card';
+        card.innerHTML = `
+          <div class="order-card-header">
+            <span class="order-id-badge">#${escapeHtml(ord.order_id)}</span>
+            ${st !== 'delivered' && st !== 'cancelled' ? `<span class="countdown-pill ${countdown.pillClass}">${countdown.text}</span>` : ''}
+          </div>
+          <div class="customer-line">${escapeHtml(ord.name)}</div>
+          <div class="items-summary">${escapeHtml(itemsText)}</div>
+          ${ord.customer_request ? `<div class="request-snippet">💬 ${escapeHtml(ord.customer_request)}</div>` : ''}
+          <div class="card-footer">
+            <span class="order-total-price">₹${Math.round(ord.total || 0)}</span>
+            ${getConfirmationBadge(ord)}
+          </div>
+          <div class="card-actions">
+            ${nextCfg && nextCfg.next ? `
+              <button class="btn btn-primary btn-sm btn-advance" data-id="${ord.order_id}">
+                ${nextCfg.action}
+              </button>
+            ` : ''}
+            ${st !== 'delivered' && st !== 'cancelled' && st !== 'rejected' ? `
+              <button class="btn btn-outline btn-sm btn-cancel-quick" data-id="${ord.order_id}" title="Reject / Cancel">
+                ✕
+              </button>
+            ` : ''}
+          </div>
+        `;
+
+        // Card click opens drawer
+        card.addEventListener('click', (ev) => {
+          if (ev.target.closest('.btn-advance') || ev.target.closest('.btn-cancel-quick')) return;
+          openDrawer(ord);
+        });
+
+        // Advance button
+        const advBtn = card.querySelector('.btn-advance');
+        if (advBtn) {
+          advBtn.addEventListener('click', (ev) => {
+            ev.stopPropagation();
+            advanceStatus(ord.order_id);
+          });
+        }
+
+        // Cancel button
+        const canBtn = card.querySelector('.btn-cancel-quick');
+        if (canBtn) {
+          canBtn.addEventListener('click', (ev) => {
+            ev.stopPropagation();
+            promptCancelOrder(ord.order_id);
+          });
+        }
+
+        container.appendChild(card);
+      });
+
+      // Update column badges
+      document.getElementById('badgePlaced').textContent = counts.placed;
+      document.getElementById('badgeAccepted').textContent = counts.accepted;
+      document.getElementById('badgePreparing').textContent = counts.preparing;
+      document.getElementById('badgeReady').textContent = counts.ready;
+      document.getElementById('badgeOutForDelivery').textContent = counts.out_for_delivery;
+      document.getElementById('badgeDelivered').textContent = counts.delivered;
+    }
+
+    // Render List View
+    function renderList(filteredList) {
+      const tbody = document.getElementById('listTableBody');
+      tbody.innerHTML = '';
+
+      if (filteredList.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding:30px; color:var(--muted);">No matching orders found</td></tr>`;
+        return;
+      }
+
+      filteredList.forEach(ord => {
+        const countdown = getRemainingTime(ord.promised_by);
+        const nextCfg = PIPELINE_STEPS[ord.status];
+        const placedTime = ord.placed_at ? new Date(ord.placed_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '-';
+        const itemsSummary = Array.isArray(ord.items) ? ord.items.map(i => `${i.qty}x ${i.name}`).join(', ') : '-';
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><strong class="order-id-badge">#${escapeHtml(ord.order_id)}</strong></td>
+          <td>
+            <strong>${escapeHtml(ord.name)}</strong><br>
+            <span style="font-size:0.75rem; color:var(--muted);">${escapeHtml(ord.phone)}</span>
+          </td>
+          <td style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+            ${escapeHtml(itemsSummary)}
+          </td>
+          <td>${placedTime}</td>
+          <td><span class="countdown-pill ${countdown.pillClass}">${countdown.text}</span></td>
+          <td><strong>₹${Math.round(ord.total || 0)}</strong></td>
+          <td><span class="confirm-badge pending" style="text-transform: capitalize;">${ord.status}</span></td>
+          <td>${getConfirmationBadge(ord)}</td>
+          <td>
+            ${nextCfg && nextCfg.next ? `
+              <button class="btn btn-primary btn-sm btn-advance-list" data-id="${ord.order_id}">
+                ${nextCfg.action}
+              </button>
+            ` : '<span style="color:var(--muted); font-size:0.78rem;">Completed</span>'}
+          </td>
+        `;
+
+        tr.addEventListener('click', (ev) => {
+          if (ev.target.closest('.btn-advance-list')) return;
+          openDrawer(ord);
+        });
+
+        const adv = tr.querySelector('.btn-advance-list');
+        if (adv) {
+          adv.addEventListener('click', (ev) => {
+            ev.stopPropagation();
+            advanceStatus(ord.order_id);
+          });
+        }
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Render Filter Counters
+    function renderFilterCounters() {
+      document.getElementById('countAll').textContent = orders.length;
+      document.getElementById('countActive').textContent = orders.filter(o => !['delivered', 'cancelled', 'rejected'].includes(o.status)).length;
+      document.getElementById('countLate').textContent = orders.filter(o => getRemainingTime(o.promised_by).isLate && !['delivered', 'cancelled', 'rejected'].includes(o.status)).length;
+      document.getElementById('countDelivered').textContent = orders.filter(o => o.status === 'delivered').length;
+      document.getElementById('countCancelled').textContent = orders.filter(o => ['cancelled', 'rejected'].includes(o.status)).length;
+    }
+
+    function renderAll() {
+      const filtered = getFilteredOrders();
+      renderStats();
+      renderFilterCounters();
+      if (currentView === 'board') {
+        renderBoard(filtered);
+      } else {
+        renderList(filtered);
+      }
+    }
+
+    // Open Detail Drawer
+    function openDrawer(order) {
+      selectedOrder = order;
+      document.getElementById('drawerOrderId').textContent = `#${order.order_id}`;
+      document.getElementById('drawerCustName').textContent = order.name || '-';
+      document.getElementById('drawerCustPhoneText').textContent = order.phone || '-';
+      document.getElementById('drawerCustPhone').href = `tel:${order.phone || ''}`;
+      document.getElementById('drawerCustAddress').textContent = order.address || 'Dining / Takeaway';
+      document.getElementById('drawerCustLandmark').textContent = order.landmark || 'None specified';
+
+      const notesWrap = document.getElementById('drawerNotesWrap');
+      const custNotes = order.customer_request || order.notes;
+      if (custNotes) {
+        notesWrap.style.display = 'flex';
+        document.getElementById('drawerCustNotes').textContent = custNotes;
+      } else {
+        notesWrap.style.display = 'none';
+      }
+
+      // Countdown pill in drawer
+      const cd = getRemainingTime(order.promised_by);
+      const drawerCd = document.getElementById('drawerCountdownPill');
+      drawerCd.className = `countdown-pill ${cd.pillClass}`;
+      drawerCd.textContent = cd.text;
+
+      // Payment info
+      document.getElementById('drawerPayMethod').textContent = (order.payment_method || 'UPI').toUpperCase();
+      document.getElementById('drawerPayStatus').textContent = (order.payment_status || 'Pending').toUpperCase();
+      document.getElementById('drawerOrderTotal').textContent = `₹${Math.round(order.total || 0)}`;
+      document.getElementById('drawerConfirmBadge').innerHTML = getConfirmationBadge(order);
+
+      // Fulfillment side-by-side
+      renderDrawerFulfillment(order);
+
+      // Timeline
+      renderDrawerTimeline(order);
+
+      // Drawer Actions
+      const nextCfg = PIPELINE_STEPS[order.status];
+      const nextBtn = document.getElementById('drawerNextBtn');
+      const rejectBtn = document.getElementById('drawerRejectBtn');
+
+      if (nextCfg && nextCfg.next) {
+        nextBtn.style.display = 'inline-flex';
+        nextBtn.textContent = nextCfg.action;
+        nextBtn.onclick = () => advanceStatus(order.order_id);
+      } else {
+        nextBtn.style.display = 'none';
+      }
+
+      if (['delivered', 'cancelled', 'rejected'].includes(order.status)) {
+        rejectBtn.style.display = 'none';
+      } else {
+        rejectBtn.style.display = 'inline-flex';
+        rejectBtn.onclick = () => promptCancelOrder(order.order_id);
+      }
+
+      document.getElementById('orderDrawer').classList.add('active');
+      document.getElementById('drawerOverlay').classList.add('active');
+    }
+
+    function closeDrawer() {
+      document.getElementById('orderDrawer').classList.remove('active');
+      document.getElementById('drawerOverlay').classList.remove('active');
+      selectedOrder = null;
+    }
+
+    // Render Side-by-Side Fulfillment Table
+    function renderDrawerFulfillment(order) {
+      const tbody = document.getElementById('drawerFulfillmentBody');
+      tbody.innerHTML = '';
+      const items = Array.isArray(order.items) ? order.items : [];
+
+      items.forEach((item, idx) => {
+        const actualStatus = item.actualStatus || 'fulfilled';
+        const actualNote = item.actualNote || '';
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>
+            <strong>${item.qty}x ${escapeHtml(item.name)}</strong>
+            ${item.customizations ? `<div style="font-size:0.75rem; color:var(--muted); margin-top:2px;">• ${escapeHtml(item.customizations)}</div>` : ''}
+            <div style="font-size:0.75rem; color:var(--green); font-weight:700; margin-top:2px;">₹${item.price} each</div>
+          </td>
+          <td>
+            <div class="item-status-selector" data-idx="${idx}">
+              <button type="button" class="item-status-pill ${actualStatus === 'fulfilled' ? 'active-fulfilled' : ''}" data-status="fulfilled">Fulfilled</button>
+              <button type="button" class="item-status-pill ${actualStatus === 'modified' ? 'active-modified' : ''}" data-status="modified">Modified</button>
+              <button type="button" class="item-status-pill ${actualStatus === 'unavailable' ? 'active-unavailable' : ''}" data-status="unavailable">Unavailable</button>
+            </div>
+            <input type="text" class="fulfillment-note-input" data-idx="${idx}" placeholder="Optional kitchen note / substitution..." value="${escapeHtml(actualNote)}">
+          </td>
+        `;
+
+        // Pill clicks
+        tr.querySelectorAll('.item-status-pill').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            tr.querySelectorAll('.item-status-pill').forEach(b => {
+              b.className = 'item-status-pill';
+            });
+            const st = e.target.dataset.status;
+            e.target.classList.add(`active-${st}`);
+            item.actualStatus = st;
+          });
+        });
+
+        // Note change
+        tr.querySelector('.fulfillment-note-input').addEventListener('input', (e) => {
+          item.actualNote = e.target.value;
+        });
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Save Fulfillment to Backend
+    async function saveFulfillment() {
+      if (!selectedOrder) return;
+      try {
+        const res = await fetch(`${API}/api/manager/orders/${selectedOrder.order_id}/items`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-manager-key': managerKey
+          },
+          body: JSON.stringify({ items: selectedOrder.items })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+        showToast('Fulfillment details saved successfully!');
+        const idx = orders.findIndex(o => o.order_id === selectedOrder.order_id);
+        if (idx !== -1) orders[idx] = data.order;
+        renderAll();
+      } catch (e) {
+        alert('Failed to save fulfillment notes');
+      }
+    }
+
+    // Render Timeline in Drawer
+    function renderDrawerTimeline(order) {
+      const container = document.getElementById('drawerTimeline');
+      container.innerHTML = '';
+      const history = Array.isArray(order.status_history) ? order.status_history : [];
+
+      if (history.length === 0) {
+        container.innerHTML = '<span style="font-size:0.8rem; color:var(--muted);">No transition logs available</span>';
+        return;
+      }
+
+      history.forEach(h => {
+        const timeStr = h.time ? new Date(h.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '-';
+        const actor = h.by ? `(by ${h.by})` : '';
+        const step = document.createElement('div');
+        step.className = 'timeline-step';
+        step.innerHTML = `
+          <div class="timeline-dot"></div>
+          <div class="timeline-step-title" style="text-transform: capitalize;">${h.status.replace(/_/g, ' ')} <span style="font-size:0.75rem; color:var(--muted); font-weight:normal;">${actor}</span></div>
+          <div class="timeline-step-time">${timeStr}</div>
+          ${h.reason ? `<div class="timeline-step-reason">Reason: ${escapeHtml(h.reason)}</div>` : ''}
+          ${h.note ? `<div style="font-size:0.75rem; color:var(--green); margin-top:2px;">${escapeHtml(h.note)}</div>` : ''}
+        `;
+        container.appendChild(step);
+      });
+    }
+
+    // Live 1-second interval to tick countdown timers smoothly
+    setInterval(() => {
+      // Update cards countdown pills in board
+      document.querySelectorAll('.order-card').forEach(card => {
+        const idBadge = card.querySelector('.order-id-badge');
+        if (!idBadge) return;
+        const id = idBadge.textContent.replace('#', '');
+        const ord = orders.find(o => o.order_id === id);
+        if (!ord || ord.status === 'delivered' || ord.status === 'cancelled') return;
+        const pill = card.querySelector('.countdown-pill');
+        if (pill) {
+          const cd = getRemainingTime(ord.promised_by);
+          pill.className = `countdown-pill ${cd.pillClass}`;
+          pill.textContent = cd.text;
+        }
+      });
+
+      // Update drawer pill if open
+      if (selectedOrder && selectedOrder.status !== 'delivered' && selectedOrder.status !== 'cancelled') {
+        const cd = getRemainingTime(selectedOrder.promised_by);
+        const drawerCd = document.getElementById('drawerCountdownPill');
+        drawerCd.className = `countdown-pill ${cd.pillClass}`;
+        drawerCd.textContent = cd.text;
+      }
+    }, 1000);
+
+    // Initialize Manager App
+    function initManagerApp() {
+      fetchOrders();
+      initSSE();
+      // 5-second polling fallback in case SSE drops
+      setInterval(fetchOrders, POLL_INTERVAL_MS);
+    }
+
+    // DOM Event Listeners Setup
+    document.addEventListener('DOMContentLoaded', () => {
+      // Check auth immediately
+      verifyAuth(managerKey);
+
+      // Auth barrier inputs
+      document.getElementById('loginBtn').addEventListener('click', () => {
+        const key = document.getElementById('managerKeyInput').value.trim();
+        if (key) verifyAuth(key);
+      });
+      document.getElementById('managerKeyInput').addEventListener('keyup', (e) => {
+        if (e.key === 'Enter') {
+          const key = e.target.value.trim();
+          if (key) verifyAuth(key);
+        }
+      });
+
+      // View toggle
+      document.getElementById('btnBoardView').addEventListener('click', () => {
+        currentView = 'board';
+        document.getElementById('btnBoardView').classList.add('active');
+        document.getElementById('btnListView').classList.remove('active');
+        document.getElementById('kanbanBoard').style.display = 'grid';
+        document.getElementById('listView').style.display = 'none';
+        renderAll();
+      });
+
+      document.getElementById('btnListView').addEventListener('click', () => {
+        currentView = 'list';
+        document.getElementById('btnListView').classList.add('active');
+        document.getElementById('btnBoardView').classList.remove('active');
+        document.getElementById('kanbanBoard').style.display = 'none';
+        document.getElementById('listView').style.display = 'block';
+        renderAll();
+      });
+
+      // Filter pills
+      document.querySelectorAll('.filter-pill').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
+          e.target.classList.add('active');
+          currentFilter = e.target.dataset.filter;
+          renderAll();
+        });
+      });
+
+      // Search input
+      document.getElementById('searchInput').addEventListener('input', (e) => {
+        searchQuery = e.target.value.trim();
+        renderAll();
+      });
+
+      // Sound toggle
+      document.getElementById('soundToggleBtn').addEventListener('click', () => {
+        soundEnabled = !soundEnabled;
+        document.getElementById('soundIcon').textContent = soundEnabled ? '🔔' : '🔕';
+        document.getElementById('soundToggleBtn').innerHTML = `${document.getElementById('soundIcon').outerHTML} Sound ${soundEnabled ? 'ON' : 'OFF'}`;
+      });
+
+      // Refresh button
+      document.getElementById('refreshBtn').addEventListener('click', () => {
+        fetchOrders();
+        showToast('Refreshing live dispatch radar...');
+      });
+
+      // Logout button
+      document.getElementById('logoutBtn').addEventListener('click', () => {
+        localStorage.removeItem('ss_manager_key');
+        document.cookie = 'ss_manager_key=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+        window.location.reload();
+      });
+
+      // Drawer close
+      document.getElementById('drawerCloseBtn').addEventListener('click', closeDrawer);
+      document.getElementById('drawerOverlay').addEventListener('click', closeDrawer);
+      document.getElementById('saveFulfillmentBtn').addEventListener('click', saveFulfillment);
+
+      // Modal buttons
+      document.getElementById('modalCancelBtn').addEventListener('click', () => {
+        document.getElementById('reasonModal').classList.remove('active');
+      });
+      document.getElementById('modalConfirmBtn').addEventListener('click', executeCancellation);
+    });
+  </script>
+</body>
+</html>

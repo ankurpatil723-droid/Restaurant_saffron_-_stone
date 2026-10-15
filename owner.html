@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kitchen &amp; Order Operations | Saffron &amp; Stone</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..700&family=Playfair+Display:ital,wght@0,500..800;1,500..700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #20251f;
+      --muted: #6f756d;
+      --cream: #f8f6ef;
+      --paper: #fffdf8;
+      --green: #294c3a;
+      --green-dark: #1d382b;
+      --lime: #d8e4a4;
+      --orange: #d97645;
+      --line: #e7e4da;
+      --shadow: 0 16px 45px rgba(29, 56, 43, 0.08);
+      --radius: 18px;
+      --card-bg: #fffdf8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--cream);
+      color: var(--ink);
+      line-height: 1.5;
+      min-height: 100vh;
+      padding: 16px;
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    /* Top Bar */
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .header-titles h1 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 1.75rem;
+      color: var(--green);
+      font-weight: 700;
+    }
+
+    .header-titles p {
+      font-size: 0.88rem;
+      color: var(--muted);
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 0.86rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid transparent;
+      transition: all 0.15s ease;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: var(--green);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--green-dark);
+    }
+
+    .btn-outline {
+      background: #fff;
+      border-color: var(--line);
+      color: var(--ink);
+    }
+
+    .btn-outline:hover {
+      background: var(--cream);
+    }
+
+    /* Auth Screen */
+    #authOverlay {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 16px;
+    }
+
+    .auth-card {
+      background: var(--card-bg);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 28px;
+      max-width: 420px;
+      width: 100%;
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+
+    .auth-card h2 {
+      font-family: 'Playfair Display', Georgia, serif;
+      color: var(--green);
+      margin-bottom: 8px;
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 12px 14px;
+      font-size: 0.95rem;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      margin: 14px 0;
+      font-family: inherit;
+      outline: none;
+    }
+
+    .input-field:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(41, 76, 58, 0.12);
+    }
+
+    /* Dashboard Metrics Bar */
+    .metrics-bar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .metric-card {
+      background: var(--card-bg);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px;
+      text-align: center;
+    }
+
+    .metric-num {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--green);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .metric-label {
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    /* Orders List */
+    .orders-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .order-card {
+      background: var(--card-bg);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .order-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .order-id-badge {
+      font-family: monospace;
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--green);
+      background: rgba(41, 76, 58, 0.08);
+      padding: 4px 10px;
+      border-radius: 8px;
+    }
+
+    .order-status-badge {
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .status-pending { background: #fef3c7; color: #92400e; }
+    .status-preparing { background: #dbeafe; color: #1e40af; }
+    .status-out_for_delivery { background: #fed7aa; color: #9a3412; }
+    .status-delivered { background: #dcfce7; color: #166534; }
+
+    .order-body {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 14px;
+      font-size: 0.88rem;
+    }
+
+    .customer-info strong {
+      color: var(--ink);
+    }
+
+    .items-list {
+      background: var(--cream);
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 0.82rem;
+    }
+
+    .items-list ul {
+      list-style-type: disc;
+      padding-left: 18px;
+      margin-top: 4px;
+    }
+
+    /* Status Action Buttons */
+    .status-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      padding-top: 8px;
+      border-top: 1px solid var(--line);
+    }
+
+    .status-btn {
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid var(--line);
+      background: #fff;
+      transition: all 0.15s ease;
+    }
+
+    .status-btn:hover {
+      border-color: var(--green);
+      background: #f4f6ee;
+    }
+
+    .status-btn.current {
+      background: var(--green);
+      color: #fff;
+      border-color: var(--green);
+      pointer-events: none;
+    }
+
+    .order-links {
+      margin-left: auto;
+      display: flex;
+      gap: 8px;
+    }
+
+    .link-pill {
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-decoration: none;
+      color: var(--green);
+      background: rgba(41, 76, 58, 0.08);
+      padding: 4px 10px;
+      border-radius: 8px;
+      transition: background 0.15s ease;
+    }
+
+    .link-pill:hover {
+      background: rgba(41, 76, 58, 0.16);
+    }
+
+    /* Toast notification */
+    #toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--green);
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: 12px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(10px);
+      transition: all 0.25s ease;
+      z-index: 9999;
+    }
+
+    #toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Auth Prompt -->
+  <div id="authOverlay">
+    <div class="auth-card">
+      <h2>Owner Portal</h2>
+      <p style="font-size:0.86rem; color:var(--muted); margin-top:4px;">Enter restaurant Admin Key to manage live orders and dispatch.</p>
+      <input type="password" id="adminKeyInput" class="input-field" placeholder="Admin Key (x-admin-key)">
+      <button type="button" id="adminLoginBtn" class="btn btn-primary" style="width:100%;">Access Orders →</button>
+      <div id="authError" style="color:#b91c1c; font-size:0.82rem; margin-top:10px; display:none;"></div>
+    </div>
+  </div>
+
+  <!-- Dashboard Main Content -->
+  <div class="container" id="dashboard" style="display:none;">
+    <header>
+      <div class="header-titles">
+        <h1>Kitchen &amp; Dispatch Ops</h1>
+        <p>Live order management · Saffron &amp; Stone</p>
+      </div>
+      <div class="header-actions">
+        <button type="button" class="btn btn-outline" id="refreshBtn">🔄 Refresh</button>
+        <button type="button" class="btn btn-outline" id="logoutBtn">Logout</button>
+      </div>
+    </header>
+
+    <!-- Metrics -->
+    <div class="metrics-bar">
+      <div class="metric-card">
+        <div class="metric-num" id="totalCount">0</div>
+        <div class="metric-label">Total Orders</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-num" id="pendingCount">0</div>
+        <div class="metric-label">Pending</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-num" id="preparingCount">0</div>
+        <div class="metric-label">In Kitchen</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-num" id="outCount">0</div>
+        <div class="metric-label">Out for Delivery</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-num" id="deliveredCount">0</div>
+        <div class="metric-label">Delivered</div>
+      </div>
+    </div>
+
+    <!-- Orders Feed -->
+    <div class="orders-grid" id="ordersContainer">
+      <p style="text-align:center; color:var(--muted); padding:30px;">Loading live orders...</p>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast"></div>
+
+  <script>
+    const API = "http://localhost:3000";
+
+    const authOverlay = document.getElementById("authOverlay");
+    const dashboard = document.getElementById("dashboard");
+    const adminKeyInput = document.getElementById("adminKeyInput");
+    const adminLoginBtn = document.getElementById("adminLoginBtn");
+    const authError = document.getElementById("authError");
+    const refreshBtn = document.getElementById("refreshBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const ordersContainer = document.getElementById("ordersContainer");
+
+    const totalCount = document.getElementById("totalCount");
+    const pendingCount = document.getElementById("pendingCount");
+    const preparingCount = document.getElementById("preparingCount");
+    const outCount = document.getElementById("outCount");
+    const deliveredCount = document.getElementById("deliveredCount");
+    const toast = document.getElementById("toast");
+
+    let adminKey = localStorage.getItem("ss_admin_key") || "";
+
+    function showToast(msg) {
+      toast.textContent = msg;
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 2500);
+    }
+
+    function escapeHTML(str) {
+      if (!str) return "";
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    if (adminKey) {
+      verifyAndLoadOrders();
+    }
+
+    adminLoginBtn.addEventListener("click", () => {
+      const val = adminKeyInput.value.trim();
+      if (!val) {
+        authError.textContent = "Please enter the admin key.";
+        authError.style.display = "block";
+        return;
+      }
+      adminKey = val;
+      verifyAndLoadOrders();
+    });
+
+    logoutBtn.addEventListener("click", () => {
+      localStorage.removeItem("ss_admin_key");
+      adminKey = "";
+      dashboard.style.display = "none";
+      authOverlay.style.display = "flex";
+      adminKeyInput.value = "";
+    });
+
+    refreshBtn.addEventListener("click", fetchOrders);
+
+    async function verifyAndLoadOrders() {
+      authError.style.display = "none";
+      try {
+        const resp = await fetch(`${API}/api/orders`, {
+          headers: { "x-admin-key": adminKey }
+        });
+
+        if (!resp.ok) {
+          if (resp.status === 401) {
+            authError.textContent = "Invalid Admin Key. Access denied.";
+          } else {
+            authError.textContent = `Server returned status ${resp.status}`;
+          }
+          authError.style.display = "block";
+          return;
+        }
+
+        localStorage.setItem("ss_admin_key", adminKey);
+        authOverlay.style.display = "none";
+        dashboard.style.display = "block";
+
+        const data = await resp.json();
+        renderOrders(data.orders || []);
+      } catch (err) {
+        authError.textContent = `Network error: ${err.message}`;
+        authError.style.display = "block";
+      }
+    }
+
+    async function fetchOrders() {
+      try {
+        refreshBtn.textContent = "Refreshing... ⏳";
+        const resp = await fetch(`${API}/api/orders`, {
+          headers: { "x-admin-key": adminKey }
+        });
+        refreshBtn.textContent = "🔄 Refresh";
+
+        if (!resp.ok) {
+          showToast("Failed to refresh orders");
+          return;
+        }
+
+        const data = await resp.json();
+        renderOrders(data.orders || []);
+        showToast("Orders updated");
+      } catch (err) {
+        refreshBtn.textContent = "🔄 Refresh";
+        showToast("Error fetching orders");
+      }
+    }
+
+    async function setOrderStatus(orderId, newStatus) {
+      try {
+        const resp = await fetch(`${API}/api/orders/${encodeURIComponent(orderId)}/status`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            "x-admin-key": adminKey
+          },
+          body: JSON.stringify({ status: newStatus })
+        });
+
+        const data = await resp.json();
+        if (!resp.ok) {
+          showToast(`Error: ${data.error || "Failed to update status"}`);
+          return;
+        }
+
+        showToast(`Order ${orderId} marked as ${newStatus}`);
+        fetchOrders();
+      } catch (err) {
+        showToast(`Failed: ${err.message}`);
+      }
+    }
+
+    function renderOrders(orders) {
+      let pending = 0, preparing = 0, out = 0, delivered = 0;
+
+      orders.forEach(o => {
+        const s = (o.status || "pending").toLowerCase();
+        if (s === "pending") pending++;
+        else if (s === "preparing") preparing++;
+        else if (s === "out_for_delivery") out++;
+        else if (s === "delivered") delivered++;
+      });
+
+      totalCount.textContent = orders.length;
+      pendingCount.textContent = pending;
+      preparingCount.textContent = preparing;
+      outCount.textContent = out;
+      deliveredCount.textContent = delivered;
+
+      if (orders.length === 0) {
+        ordersContainer.innerHTML = `<p style="text-align:center; color:var(--muted); padding:40px;">No orders found.</p>`;
+        return;
+      }
+
+      ordersContainer.innerHTML = orders.map(order => {
+        const status = (order.status || "pending").toLowerCase();
+        const dateStr = order.created_at ? new Date(order.created_at).toLocaleString() : "Recent";
+        const items = Array.isArray(order.items) ? order.items : [];
+        const itemsHtml = items.map(i => `<li>${escapeHTML(i.name)} × ${escapeHTML(i.qty || i.quantity || 1)}</li>`).join("");
+
+        const trackingToken = order.tracking_token || "";
+        const trackLink = trackingToken ? `<a href="track.html?t=${encodeURIComponent(trackingToken)}" target="_blank" class="link-pill">📍 Live Map</a>` : "";
+        const driverLink = `<a href="driver.html?orderId=${encodeURIComponent(order.order_id)}" target="_blank" class="link-pill">🛵 Driver Link</a>`;
+
+        return `
+          <div class="order-card" id="card-${escapeHTML(order.order_id)}">
+            <div class="order-header">
+              <div style="display:flex; align-items:center; gap:10px;">
+                <span class="order-id-badge">${escapeHTML(order.order_id)}</span>
+                <span style="font-size:0.8rem; color:var(--muted);">${escapeHTML(dateStr)}</span>
+              </div>
+              <span class="order-status-badge status-${escapeHTML(status)}">${escapeHTML(status.replace(/_/g, " "))}</span>
+            </div>
+
+            <div class="order-body">
+              <div class="customer-info">
+                <div><strong>${escapeHTML(order.customer_name || order.name || "Customer")}</strong></div>
+                <div style="color:var(--muted); font-size:0.84rem;">📞 <a href="tel:${escapeHTML(order.phone)}" style="color:inherit;">${escapeHTML(order.phone)}</a></div>
+                <div style="margin-top:4px;"><strong>Type:</strong> ${escapeHTML(order.order_type || order.type || "Delivery")}</div>
+                ${order.address ? `<div style="margin-top:4px; color:var(--muted);">🏠 ${escapeHTML(order.address)}</div>` : ""}
+                ${order.notes ? `<div style="margin-top:4px; font-style:italic; color:var(--orange);">📝 ${escapeHTML(order.notes)}</div>` : ""}
+                <div style="margin-top:8px; font-weight:700; color:var(--green); font-size:0.95rem;">
+                  Total: ₹${escapeHTML(order.total || 0)}
+                </div>
+              </div>
+
+              <div class="items-list">
+                <strong>Items (${items.length}):</strong>
+                <ul>${itemsHtml}</ul>
+              </div>
+            </div>
+
+            <div class="status-actions">
+              <span style="font-size:0.78rem; font-weight:700; color:var(--muted); text-transform:uppercase; margin-right:4px;">Set Status:</span>
+              <button type="button" class="status-btn ${status === 'pending' ? 'current' : ''}" onclick="setOrderStatus('${escapeHTML(order.order_id)}', 'pending')">Pending</button>
+              <button type="button" class="status-btn ${status === 'preparing' ? 'current' : ''}" onclick="setOrderStatus('${escapeHTML(order.order_id)}', 'preparing')">Preparing</button>
+              <button type="button" class="status-btn ${status === 'out_for_delivery' ? 'current' : ''}" onclick="setOrderStatus('${escapeHTML(order.order_id)}', 'out_for_delivery')">Out for Delivery</button>
+              <button type="button" class="status-btn ${status === 'delivered' ? 'current' : ''}" onclick="setOrderStatus('${escapeHTML(order.order_id)}', 'delivered')">Delivered</button>
+
+              <div class="order-links">
+                ${trackLink}
+                ${driverLink}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    // Auto-refresh every 20 seconds while open
+    setInterval(fetchOrders, 20000);
+  </script>
+</body>
+</html>
