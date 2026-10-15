@@ -20,9 +20,9 @@ model Todo {
 model Order {
   id             BigInt   @id @default(autoincrement())
   order_id       String   @unique
-  customer_name  String
+  customer_name  String @default("Guest")
   phone          String
-  order_type     String
+  order_type     String @default("delivery")
   address        String?
   notes          String?
   items          Json     @default("[]")
